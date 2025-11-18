@@ -33,7 +33,5 @@ class JsonUtilTest {
         String str = "{\"id\":123,\"name\":\"test\",\"age\":123}";
         TestClass testClass = JsonUtil.string2Obj(str, TestClass.class);
         System.out.println(testClass);
-
-
     }
 }
