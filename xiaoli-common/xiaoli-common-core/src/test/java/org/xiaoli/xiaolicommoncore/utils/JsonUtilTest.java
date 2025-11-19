@@ -2,7 +2,7 @@ package org.xiaoli.xiaolicommoncore.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.jupiter.api.Test;
-import org.xiaoli.xiaolicommoncore.utils.domain.TestClass;
+import org.xiaoli.xiaolicommoncore.utils.domain.*;
 
 import java.util.*;
 
@@ -95,7 +95,66 @@ class JsonUtilTest {
         List<Map<String, TestClass>> maps = JsonUtil.string2Obj("[{\"test\":{\"id\":123,\"name\":\"test\",\"age\":123}}]", new TypeReference<List<Map<String, TestClass>>>() {
         });
         System.out.println(maps);
+    }
+
+
+    @Test
+    public void jsonConfigTest1(){
+//        TestUser user = new TestUser();
+//        user.setName("test");
+//        System.out.println(JsonUtil.obj2String(user));
+////      当有未知的参数时候，通过配置，进而让他不会抛出异常！！
+//        String jsonStr = "{\"name\":\"test\",\"age\":123}";
+//
+//        System.out.println(JsonUtil.string2Obj(jsonStr, TestUser.class));
+
+//        TestUser testUser = new TestUser();
+//        testUser.setName("test");
+//        testUser.setDate(new Date());
+//        System.out.println(JsonUtil.obj2String(testUser));
+
+//        TestUser testUser = new TestUser();
+//        Map<Date,String> map = new LinkedHashMap<>();
+//        Date date = new Date();
+//        map.put(date,"111");
+//        testUser.setMap(map);
+//        testUser.setName("test");
+//        System.out.println(JsonUtil.obj2String(testUser));
+
+    }
+    @Test
+    public void jsonConfigTest2() {
+
+//        TestAnimal testAnimal = new TestAnimal();
+//        System.out.println(JsonUtil.obj2String(testAnimal));
+//
+//        TestDog testDog = new TestDog();
+//        testDog.setName("testDog");
+//        testDog.setAge(123);
+//        System.out.println(JsonUtil.obj2String(testDog));
+//
+//        TestCat cat = new TestCat();
+//        cat.setName("testCat");
+//        cat.setSex("母");
+//        System.out.println(JsonUtil.obj2String(cat));
+
+        String dogJson = "{\"type\":\"dog\",\"name\":\"testDog\",\"age\":123}";
+        String catJson = "{\"type\":\"cat\",\"sex\":\"母\"}";
+        String birdJson = "{\"type\":\"bird\",\"sex\":\"母\"}";
+
+
+        System.out.println(JsonUtil.string2Obj(dogJson, TestAnimal.class));
+        System.out.println(JsonUtil.string2Obj(catJson, TestAnimal.class));
+        System.out.println(JsonUtil.string2Obj(birdJson, TestAnimal.class));
+
+
+
 
 
     }
+
+
+
+
+
 }

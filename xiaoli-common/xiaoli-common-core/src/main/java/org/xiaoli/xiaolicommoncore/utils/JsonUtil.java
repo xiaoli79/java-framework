@@ -22,18 +22,26 @@ public class JsonUtil {
 
     static {
         OBJECT_MAPPER = JsonMapper.builder()
+//              在反序列的时候，当Json数据中存在Java对象类中没有定义的属性时，若设置true ，则Jackson会抛出异常~，改为false，则不会
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+//              序列化时，若为true，将日期类型的数据转换为时间戳~~
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+//              如果一个类没有成员变量，如果设置为true的话，并且序列化的话的，会直接抛出异常~~
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+//              在反序列化的时候，若type类型中有未定义的类型~~若设置为true，则会抛出异常~
                 .configure(DeserializationFeature.FAIL_ON_INVALID_SUBTYPE, false)
+//              这是如果Map中有以日期类型为键，若设置为true，会把其设置为时间戳的形式
                 .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
+//              这是使Json注解生效，如果设置为true,注解则生效；反之，则失效~~
                 .configure(MapperFeature.USE_ANNOTATIONS, false)
+//              这是序列化LocalDateTime和LocalDate的配置
                 .addModule(new JavaTimeModule())
+//              统一日期格式
                 .defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")) // TODO 魔法值需要统一管理并加上有效注释
+//              只针对非空的值进行序列化~~
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .build();
     }
-
     /**
      * 对象转Json格式字符串
      * @param obj 对象
@@ -111,7 +119,7 @@ public class JsonUtil {
         try {
             return OBJECT_MAPPER.readValue(str,valueTypeRef);
         } catch (JsonProcessingException e) {
-            log.warn("Parse String to Object error : {}", e.getMessage());
+            log.warn("Json字符串转对象失败 : {}", e.getMessage());
             return null;
         }
     }
@@ -134,7 +142,7 @@ public class JsonUtil {
         try {
             return OBJECT_MAPPER.readValue(str, javaType);
         } catch (JsonProcessingException e) {
-            log.warn("Parse String to Object error : {}", e.getMessage());
+            log.warn("Json字符串转对象失败 : {}", e.getMessage());
             return null;
         }
     }
@@ -156,10 +164,12 @@ public class JsonUtil {
         try {
             return OBJECT_MAPPER.readValue(str, javaType);
         } catch (JsonProcessingException e) {
-            log.warn("Parse String to Object error : {}", e.getMessage());
+            log.warn("Json字符串转对象失败  : {}", e.getMessage());
             return null;
         }
     }
+
+
 }
 
 
