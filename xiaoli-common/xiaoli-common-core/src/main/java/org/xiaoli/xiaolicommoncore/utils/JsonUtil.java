@@ -92,7 +92,7 @@ public class JsonUtil {
      */
     public static<T>T string2Obj(String str, Class<T> clazz){
 
-        if(str == null || str.isEmpty() || clazz == null){
+        if(StringUtils.isEmpty(str) || clazz == null){
             return null;
         }
         try{
