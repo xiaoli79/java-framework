@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xiaoli.xiaolicommondomain.domain.R;
+import org.xiaoli.xiaolicommondomain.domain.ResultCode;
+import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
 @RestController
 @Slf4j
@@ -25,5 +27,20 @@ public class TestController {
         }
         return R.ok();
     }
+
+    @GetMapping("/exception")
+    public R<Void> Exception (int id){
+
+        if(id < 0){
+            throw new ServiceException(ResultCode.INVALID_PARA);
+        }
+        if(id == 1){
+            throw new ServiceException("id不能为1");
+
+        }
+        throw  new ServiceException("无效的参数",ResultCode.ERROR.getCode());
+
+    }
+
 
 }

@@ -13,6 +13,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.ResultCode;
+import org.xiaoli.xiaolicommondomain.exception.ServiceException;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -86,22 +88,22 @@ public class GlobalExceptionHandler {
         return R.fail(ResultCode.URL_NOT_FOUND.getCode(), ResultCode.URL_NOT_FOUND.getMsg());
     }
 
-//    /**
-//     * 业务异常
-//     *
-//     * @param e 异常信息
-//     * @param request 请求
-//     * @param response 响应
-//     * @return 业务异常结果
-//     */
-//    @ExceptionHandler(ServiceException.class)
-//    public R<?> handleServiceException(ServiceException e, HttpServletRequest request,
-//                                       HttpServletResponse response) {
-//        String requestURI = request.getRequestURI();
-//        log.error("请求地址'{}',发生业务异常", requestURI,  e);
-//        setResponseCode(response,e.getCode());
-//        return R.fail(e.getCode(), e.getMessage());
-//    }
+    /**
+     * 业务异常
+     *
+     * @param e 异常信息
+     * @param request 请求
+     * @param response 响应
+     * @return 业务异常结果
+     */
+    @ExceptionHandler(ServiceException.class)
+    public R<?> handleServiceException(ServiceException e, HttpServletRequest request,
+                                       HttpServletResponse response) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',发生业务异常", requestURI,  e);
+        setResponseCode(response,e.getCode());
+        return R.fail(e.getCode(), e.getMsg());
+    }
 
     /**
      * 参数校验异常
