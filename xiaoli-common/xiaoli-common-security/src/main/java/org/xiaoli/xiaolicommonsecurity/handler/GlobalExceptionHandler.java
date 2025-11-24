@@ -105,31 +105,31 @@ public class GlobalExceptionHandler {
         return R.fail(e.getCode(), e.getMsg());
     }
 
-    /**
-     * 参数校验异常
-     * @param e 异常信息
-     * @param request 请求
-     * @param response 响应
-     * @return 异常报文
-     */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public R<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request,
-                                                      HttpServletResponse response) {
-        String requestURI = request.getRequestURI();
-        log.error("请求地址'{}',发生参数校验异常", requestURI, e);
-        setResponseCode(response, ResultCode.INVALID_PARA.getCode());
-        String message = joinMessage(e);
-        return R.fail(ResultCode.INVALID_PARA.getCode(), message);
-    }
-
-    private String joinMessage(MethodArgumentNotValidException e) {
-        List<ObjectError> allErrors = e.getAllErrors();
-        if (CollectionUtils.isEmpty(allErrors)) {
-            return "";
-        }
-//        List<String> collect = allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
-        return allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(", "));
-    }
+//    /**
+//     * 参数校验异常
+//     * @param e 异常信息
+//     * @param request 请求
+//     * @param response 响应
+//     * @return 异常报文
+//     */
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public R<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request,
+//                                                      HttpServletResponse response) {
+//        String requestURI = request.getRequestURI();
+//        log.error("请求地址'{}',发生参数校验异常", requestURI, e);
+//        setResponseCode(response, ResultCode.INVALID_PARA.getCode());
+//        String message = joinMessage(e);
+//        return R.fail(ResultCode.INVALID_PARA.getCode(), message);
+//    }
+//
+//    private String joinMessage(MethodArgumentNotValidException e) {
+//        List<ObjectError> allErrors = e.getAllErrors();
+//        if (CollectionUtils.isEmpty(allErrors)) {
+//            return "";
+//        }
+////        List<String> collect = allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
+//        return allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(", "));
+//    }
 
 //    /**
 //     * 参数校验异常
