@@ -1,7 +1,7 @@
 package org.xiaoli.xiaolicommonsecurity.handler;
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.validation.ObjectError;
@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
+import org.xiaoli.xiaolicommondomain.constants.CommonConstants;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.ResultCode;
 import org.xiaoli.xiaolicommondomain.exception.ServiceException;
@@ -19,12 +20,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-
 /**
  * 全局异常处理器
  */
-
-
 @RestControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
@@ -105,48 +103,51 @@ public class GlobalExceptionHandler {
         return R.fail(e.getCode(), e.getMsg());
     }
 
-//    /**
-//     * 参数校验异常
-//     * @param e 异常信息
-//     * @param request 请求
-//     * @param response 响应
-//     * @return 异常报文
-//     */
-//    @ExceptionHandler(MethodArgumentNotValidException.class)
-//    public R<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request,
-//                                                      HttpServletResponse response) {
-//        String requestURI = request.getRequestURI();
-//        log.error("请求地址'{}',发生参数校验异常", requestURI, e);
-//        setResponseCode(response, ResultCode.INVALID_PARA.getCode());
-//        String message = joinMessage(e);
-//        return R.fail(ResultCode.INVALID_PARA.getCode(), message);
-//    }
-//
-//    private String joinMessage(MethodArgumentNotValidException e) {
-//        List<ObjectError> allErrors = e.getAllErrors();
-//        if (CollectionUtils.isEmpty(allErrors)) {
-//            return "";
-//        }
-////        List<String> collect = allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
-//        return allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(", "));
-//    }
+    /**
+     * 参数校验异常
+     * @param e 异常信息
+     * @param request 请求
+     * @param response 响应
+     * @return 异常报文
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public R<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e, HttpServletRequest request,
+                                                      HttpServletResponse response) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}',发生参数校验异常", requestURI, e);
+        setResponseCode(response, ResultCode.INVALID_PARA.getCode());
+        String message = joinMessage(e);
+        return R.fail(ResultCode.INVALID_PARA.getCode(),message);
+    }
 
-//    /**
-//     * 参数校验异常
-//     * @param e 异常信息
-//     * @param request 请求
-//     * @param response 响应
-//     * @return 异常报文
-//     */
-//    @ExceptionHandler({ConstraintViolationException.class})
-//    public R<Void> handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest request,
-//                                                      HttpServletResponse response) {
-//        String requestURI = request.getRequestURI();
-//        log.error("请求地址'{}', 发生参数校验异常",requestURI, e);
-//        setResponseCode(response,ResultCode.INVALID_PARA.getCode());
-//        String message = e.getMessage();
-//        return R.fail(ResultCode.INVALID_PARA.getCode(),message);
-//    }
+    private String joinMessage(MethodArgumentNotValidException e) {
+        List<ObjectError> allErrors = e.getAllErrors();
+        if (CollectionUtils.isEmpty(allErrors)) {
+            return CommonConstants.EMPTY_STR;
+        }
+
+//        这个是往集合上去放
+//        List<String> collect = allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.toList());
+//        这个是往字符串上去拼接
+        return allErrors.stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(CommonConstants.DEFAULT_DELIMITER));
+    }
+
+    /**
+     * 参数校验异常
+     * @param e 异常信息
+     * @param request 请求
+     * @param response 响应
+     * @return 异常报文
+     */
+    @ExceptionHandler({ConstraintViolationException.class})
+    public R<Void> handleConstraintViolationException(ConstraintViolationException e, HttpServletRequest request,
+                                                      HttpServletResponse response) {
+        String requestURI = request.getRequestURI();
+        log.error("请求地址'{}', 发生参数校验异常",requestURI, e);
+        setResponseCode(response,ResultCode.INVALID_PARA.getCode());
+        String message = e.getMessage();
+        return R.fail(ResultCode.INVALID_PARA.getCode(),message);
+    }
 
 
     /**
