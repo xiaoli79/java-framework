@@ -4,11 +4,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.xiaoli.xiaolicommondomain.constants.CommonConstants;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +39,15 @@ public class JsonUtil {
                 .configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false)
 //              这是使Json注解生效，如果设置为true,注解则生效；反之，则失效~~
                 .configure(MapperFeature.USE_ANNOTATIONS, false)
-//              这是序列化LocalDateTime和LocalDate的配置
+
                 .addModule(new JavaTimeModule())
+//                这是序列化LocalDateTime和LocalDate的配置
+                .addModule(new SimpleModule()
+                        .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(CommonConstants.STANDARD_FORMAT)))
+                        .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(CommonConstants.STANDARD_FORMAT)))
+                )
 //              统一日期格式
-                .defaultDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")) // TODO 魔法值需要统一管理并加上有效注释
+                .defaultDateFormat(new SimpleDateFormat(CommonConstants.STANDARD_FORMAT)) // TODO 魔法值需要统一管理并加上有效注释
 //              只针对非空的值进行序列化~~
                 .serializationInclusion(JsonInclude.Include.NON_NULL)
                 .build();
@@ -167,6 +178,9 @@ public class JsonUtil {
             return null;
         }
     }
+
+
+
 
 
 }

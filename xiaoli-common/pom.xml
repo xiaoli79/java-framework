@@ -15,6 +15,7 @@
         <module>xiaoli-common-core</module>
         <module>xiaoli-common-domain</module>
         <module>xiaoli-common-security</module>
+        <module>xiaoli-common-redis</module>
     </modules>
 
     <properties>
