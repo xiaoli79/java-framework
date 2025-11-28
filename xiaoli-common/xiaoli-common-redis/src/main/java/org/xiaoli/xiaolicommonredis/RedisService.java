@@ -1,13 +1,19 @@
 package org.xiaoli.xiaolicommonredis;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
 import org.xiaoli.xiaolicommoncore.utils.JsonUtil;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public class RedisService {
 
+
+
+    @Autowired
     private RedisTemplate redisTemplate;
 
 //  缓存String类型的数据~~
