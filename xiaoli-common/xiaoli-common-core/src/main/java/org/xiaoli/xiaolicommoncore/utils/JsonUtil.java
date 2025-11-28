@@ -1,4 +1,5 @@
 package org.xiaoli.xiaolicommoncore.utils;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -11,7 +12,6 @@ import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import io.micrometer.common.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.xiaoli.xiaolicommondomain.constants.CommonConstants;
-
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 
+
+//封装Redis中String类中的常用方法~~
 @Slf4j
 public class JsonUtil {
 
@@ -115,13 +117,11 @@ public class JsonUtil {
 
     /**
      * 字符串转换为自定义对象,支持复杂的泛型嵌套
-     *
      * @param str json字符串
      * @param valueTypeRef 对象模板信息
      * @return 对象类对应的对象
      * @param <T> 对象类
      */
-
     public static <T> T string2Obj(String str, TypeReference<T> valueTypeRef) {
         if (StringUtils.isEmpty(str) || valueTypeRef == null) {
             return null;
@@ -133,8 +133,6 @@ public class JsonUtil {
             return null;
         }
     }
-
-
     /**
      * 字符串转换为自定义字段转为list,支持List嵌套简单对象
      * @param str json字符串
@@ -142,7 +140,6 @@ public class JsonUtil {
      * @return 对象列表
      * @param <T> 对象类型
      */
-
 //  解决泛型擦除问题~
     public static <T> List<T> string2List(String str, Class<T> clazz) {
         if (StringUtils.isEmpty(str) || clazz == null) {
@@ -156,7 +153,6 @@ public class JsonUtil {
             return null;
         }
     }
-
     /**
      * 字符串转换为自定义字段转为map,支持Map嵌套简单对象
      * @param str  str 字符串信息
@@ -164,7 +160,6 @@ public class JsonUtil {
      * @return   map对象
      * @param <T> value 的类型
      */
-
     //  解决泛型擦除问题~
     public static <T> Map<String, T> string2Map(String str, Class<T> valueClass){
         if (StringUtils.isEmpty(str) || valueClass == null) {
@@ -178,11 +173,4 @@ public class JsonUtil {
             return null;
         }
     }
-
-
-
-
-
 }
-
-
