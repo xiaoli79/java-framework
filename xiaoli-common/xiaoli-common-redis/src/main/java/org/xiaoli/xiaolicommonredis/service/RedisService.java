@@ -1,4 +1,4 @@
-package org.xiaoli.xiaolicommonredis;
+package org.xiaoli.xiaolicommonredis.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,12 +47,13 @@ public class RedisService {
 
 
         Object o = valueOperations.get(key);
-
+//      判断得到的对象是否为空~~
         if(o == null){
             return null;
         }
-
+//      先序列化
         String jsonStr = JsonUtil.obj2String(o);
+//      反序列化
         return JsonUtil.string2Obj(jsonStr,clazz);
 
     }
