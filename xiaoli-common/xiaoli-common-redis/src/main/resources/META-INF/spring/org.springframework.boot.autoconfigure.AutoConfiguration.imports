@@ -1,1 +1,2 @@
-org.xiaoli.xiaolicommonredis.RedisService
+org.xiaoli.xiaolicommonredis.service.RedisService
+org.xiaoli.xiaolicommonredis.config.RedisConfig

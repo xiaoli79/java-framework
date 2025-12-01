@@ -1,4 +1,3 @@
-
 #这个spring application 和 profiles active 对应着配置信息名称，拼起来就是
 #xiaoli-mstemplate-dev
 spring:
@@ -6,6 +5,8 @@ spring:
     name: xiaoli-mstemplate
   profiles:
     active: ${RUN_ENV}
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     nacos:
       discovery:
