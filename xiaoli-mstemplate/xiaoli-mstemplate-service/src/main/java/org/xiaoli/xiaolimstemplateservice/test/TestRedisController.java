@@ -31,16 +31,33 @@ public class TestRedisController {
 //        redisService.setCacheObject("testAGC","abc",15L, TimeUnit.SECONDS);
 //
 //        redisService.setCacheObjectIfAbsent("test",123);
-        TestClass testClass = new TestClass();
-        testClass.setName("test");
-        testClass.setAge(123);
-        testClass.setId(123);
-        List<Map<String,TestClass>> list = new ArrayList<>();
-        Map<String,TestClass> map = new HashMap<>();
-        map.put("test", testClass);
-        list.add(map);
-        redisService.setCacheObject("testList",list);
+//        TestClass testClass = new TestClass();
+//        testClass.setName("test");
+//        testClass.setAge(123);
+//        testClass.setId(123);
+//        List<Map<String,TestClass>> list = new ArrayList<>();
+//        Map<String,TestClass> map = new HashMap<>();
+//        map.put("test", testClass);
+//        list.add(map);
+//        redisService.setCacheObject("testList",list);
 
+        List<String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+        list.add("4");
+        list.add("5");
+        redisService.setCacheList("list", list);
+
+        return R.ok();
+    }
+
+
+    @PostMapping("/insert")
+    public R<Void> insert(){
+        List<String> list = new ArrayList<>();
+        list.add("6");
+        redisService.leftPushForList("list",list);
         return R.ok();
     }
 
@@ -48,16 +65,21 @@ public class TestRedisController {
     public R<Void> get(){
 //        String str = redisService.getCacheObject("test", String.class);
 //        log.info(str);
-        
-        
-        
+
 //      将数据从Redis中取出来,确保取出来的数据不会出现泛型擦除问题~~~~~
-        List<Map<String, TestClass>> testList = redisService.getCacheObject("testList", new TypeReference<List<Map<String, TestClass>>>() {
-        });
+//        List<Map<String, TestClass>> testList = redisService.getCacheObject("testList", new TypeReference<List<Map<String, TestClass>>>() {
+//        });
+        List<String> list = redisService.getCacheList("list", String.class);
+        System.out.println(list);
 
-        System.out.println(testList);
+//
+//        System.out.println(testList);
+        return R.ok();
+    }
 
-
+    @PostMapping("/delete")
+    public R<Void> delete(){
+        redisService.removeForAllList("list");
         return R.ok();
     }
 
