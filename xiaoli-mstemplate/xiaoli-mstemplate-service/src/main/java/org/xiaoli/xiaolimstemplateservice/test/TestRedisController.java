@@ -11,6 +11,7 @@ import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommonredis.service.RedisService;
 import org.xiaoli.xiaolimstemplateservice.domain.TestClass;
 
+import java.lang.reflect.Type;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -84,4 +85,73 @@ public class TestRedisController {
     }
 
 
+
+    @PostMapping("/set/add")
+    public R<Void> setAdd(){
+        redisService.addMember("list",1,2,3,1,2,3,4,5,6);
+
+        return R.ok();
+
+    }
+
+
+    @PostMapping("/zset/add")
+    public R<Void> zsetAdd(){
+        redisService.addMemberZSet("testZset","a",1);
+        redisService.addMemberZSet("testZset","b",2);
+        redisService.addMemberZSet("testZset","c",3);
+        redisService.addMemberZSet("testZset","d",4);
+
+        return R.ok();
+
+    }
+
+
+    @PostMapping("/hash/add")
+    public R<Void> hashAdd(){
+        Map<String,Object> map = new HashMap<>();
+        map.put("test1",3);
+        map.put("test2",2);
+        map.put("test3",1);
+        redisService.setCacheMap("Test",map);
+
+        return R.ok();
+    }
+
+
+
+    @PostMapping("/set/delete")
+    public R<Void> setDelete(){
+        redisService.deleteMember("list",1,2,3);
+        return R.ok();
+    }
+
+
+    @GetMapping("/hash/get")
+    public R<Void> getData(){
+        Map<String, Integer> test = redisService.getCacheMap("Test", new TypeReference<Map<String, Integer>>() {
+        });
+
+
+//      这是以键值对的类型进行输出也就是map~~
+        System.out.println(test);
+
+
+
+        List<String> hkeys = new ArrayList<>();
+        hkeys.add("test2");
+        hkeys.add("test1");
+
+
+//
+
+        List<String> multiCacheMapValue = redisService.getMultiCacheMapValue("Test", hkeys, new TypeReference<List<String>>() {
+        });
+
+
+//      这是以List<String>
+        System.out.println(multiCacheMapValue);
+        return R.ok();
+
+    }
 }
