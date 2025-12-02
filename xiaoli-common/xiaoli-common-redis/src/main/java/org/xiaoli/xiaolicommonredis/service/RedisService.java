@@ -7,11 +7,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 import org.xiaoli.xiaolicommoncore.utils.JsonUtil;
-
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-
 
 
 
@@ -20,7 +17,90 @@ public class RedisService {
 
     @Autowired
     private RedisTemplate redisTemplate;
-//    ************************操作String类型*********************************8
+
+
+
+//    ************************基本操作****************************
+    /**
+     * 设置数据有效时间（时间默认是s）
+     * @param key
+     * @param timeout
+     * @return
+     */
+    public Boolean expire(final String key, final long timeout) {
+        return redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+    }
+
+
+    /**
+     * redis设置数据有效时间（可指定时间单位）
+     * @param key
+     * @param timeout
+     * @param timeUnit
+     * @return
+     */
+    public Boolean expire(final String key, final long timeout, final TimeUnit timeUnit) {
+        return redisTemplate.expire(key, timeout, timeUnit);
+    }
+
+
+    /**
+     * 获取有效时间
+     * @param key
+     * @return
+     */
+    public long getExpire(final String key) {
+        return redisTemplate.getExpire(key, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 判断key是否存在
+     * @param key
+     * @return
+     */
+    public Boolean hasKey(String key){
+        return redisTemplate.hasKey(key);
+    }
+
+    /**
+     * 根据提供的键模式查找Redis中匹配的键
+     * @param pattern  要查找的键的模式
+     * @return 键列表
+     */
+    public Collection<String> keys(final String pattern){
+        return redisTemplate.keys(pattern);
+    }
+
+
+    /**
+     * 重命名key
+     * @param oldKey  原来key
+     * @param newKey  新key
+     */
+    public void renameKey(String oldKey, String newKey){
+        redisTemplate.rename(oldKey, newKey);
+    }
+
+    /**
+     * 删除单个数据
+     * @param key
+     * @return
+     */
+    public boolean deleteObject(final String key){
+        return redisTemplate.delete(key);
+    }
+
+    /**
+     * 删除多个数据
+     * @param collection
+     * @return
+     */
+    public boolean deleteObjects(final Collection<String> collection){
+        return redisTemplate.delete(collection) > 0;
+    }
+
+
+//    ************************操作String类型*******************************
 
 //  缓存String类型的数据~~
     public <T> void setCacheObject(final String key,final T value){
