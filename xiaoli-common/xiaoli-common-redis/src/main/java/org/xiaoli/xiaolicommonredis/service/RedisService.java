@@ -1,10 +1,12 @@
 package org.xiaoli.xiaolicommonredis.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 import org.xiaoli.xiaolicommoncore.utils.JsonUtil;
 import java.util.*;
@@ -116,7 +118,7 @@ public class RedisService {
 
 
 //  如果没有key，则设置，如果有key,则不设置~~
-    public <T> Boolean setCacheObjectIfAbsent(final String key,final T value){
+    public <T> Boolean setCacheObjectIfAbsent(final String key, final T value, long timeout, TimeUnit seconds){
         return redisTemplate.opsForValue().setIfAbsent(key,value);
     }
 
@@ -500,6 +502,30 @@ public class RedisService {
 //      然后对List进行序列化~~ 然后在反序列化拿到对象，然后就巧妙地获取了List<String>
         return JsonUtil.string2Obj(JsonUtil.obj2String(data), typeReference);
     }
+
+
+    //************************ Lua脚本 ***************************
+
+    /**
+     * 删除指定值对应的Redis中的键值（compareanddelete）
+     *
+     * @param key   缓存key
+     * @param value value
+     * @return 是否完成了比较并删除
+     */
+    public boolean cad(String key, String value) {
+        if (key.contains(StringUtils.SPACE) || value.contains(StringUtils.SPACE))
+            return false;
+
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+
+        // 通过Lua脚本原子验证令牌和删除令牌
+        Long result = (Long) redisTemplate.execute(new DefaultRedisScript<>(script, Long.class),
+                Collections.singletonList(key),
+                value);
+        return !Objects.equals(result, 0L);
+    }
+
 
 }
 
