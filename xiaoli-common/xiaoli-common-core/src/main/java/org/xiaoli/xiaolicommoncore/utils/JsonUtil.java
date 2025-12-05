@@ -173,4 +173,16 @@ public class JsonUtil {
             return null;
         }
     }
+
+    /**
+     *
+     * @param obj 待转换的对象
+     * @return   转换之后的map
+     */
+
+    public static Map<String,Object> convertToMap(Object obj){
+        return OBJECT_MAPPER.convertValue(obj, Map.class);
+    }
+
+
 }

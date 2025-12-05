@@ -58,8 +58,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- SpringCloud Alibaba 微服务 -->
-            <dependency>
+            <!-- SpringCloud Alibaba 微服务 -->            <dependency>
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
