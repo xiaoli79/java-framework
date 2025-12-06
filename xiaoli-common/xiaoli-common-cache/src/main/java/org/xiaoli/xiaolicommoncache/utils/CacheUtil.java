@@ -1,6 +1,5 @@
 package org.xiaoli.xiaolicommoncache.utils;
 
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.extern.slf4j.Slf4j;

@@ -23,6 +23,8 @@ spring:
 #       共享配置~~
         shared-configs:
           - data-id: share-redis-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+          - data-id: share-caffeine-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
+
 
 # 这一配置用于定义应用在控制台输出日志时所遵循的格式规则
 logging:

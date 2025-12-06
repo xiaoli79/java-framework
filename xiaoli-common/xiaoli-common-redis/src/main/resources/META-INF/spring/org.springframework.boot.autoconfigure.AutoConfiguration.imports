@@ -1,3 +1,3 @@
 org.xiaoli.xiaolicommonredis.service.RedisService
 org.xiaoli.xiaolicommonredis.config.RedisConfig
-org.xiaoli.xiaolicommonredis.config.RedissonLockService
+org.xiaoli.xiaolicommonredis.service.RedissonLockService
