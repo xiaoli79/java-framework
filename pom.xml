@@ -15,6 +15,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>xiaoli-common</module>
+        <module>xiaoli-file</module>
     </modules>
     <version>1.0-SNAPSHOT</version>
 
@@ -58,8 +59,8 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- SpringCloud Alibaba 微服务 -->            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
+           <dependency>
+                    <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-alibaba-dependencies</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
                 <type>pom</type>
