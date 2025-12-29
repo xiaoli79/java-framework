@@ -59,6 +59,9 @@ public class OSSProperties  {
      */
     private String pathPrefix;
 
+    /**
+     * 超时时间
+     */
     private Integer expre;
 
     private Integer minLen;

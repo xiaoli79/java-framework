@@ -6,10 +6,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 @Slf4j
 @SpringBootApplication
-public class BiteFileServiceApplication {
+public class XiaoLiFileServiceApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(BiteFileServiceApplication.class, args);
+        SpringApplication.run(XiaoLiFileServiceApplication.class, args);
 
     }
 }
