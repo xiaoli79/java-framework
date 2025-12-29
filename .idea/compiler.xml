@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="xiaoli-common-rabbitmq" />
+        <module name="xiaoli-common-cache" />
+        <module name="xiaoli-mstemplate-service" />
+        <module name="xiaoli-common-domain" />
+        <module name="xiaoli-gateway" />
+        <module name="xiaoli-file-api" />
+        <module name="xiaoli-file-service" />
+        <module name="xiaoli-common-core" />
+        <module name="xiaoli-mstemplate-api" />
+        <module name="xiaoli-common-redis" />
+        <module name="xiaoli-common-security" />
+      </profile>
+    </annotationProcessing>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="java-framework" options="" />
+      <module name="xiaoli-common" options="" />
+      <module name="xiaoli-common-cache" options="-parameters" />
+      <module name="xiaoli-common-core" options="-parameters" />
+      <module name="xiaoli-common-domain" options="-parameters" />
+      <module name="xiaoli-common-rabbitmq" options="-parameters" />
+      <module name="xiaoli-common-redis" options="-parameters" />
+      <module name="xiaoli-common-security" options="-parameters" />
+      <module name="xiaoli-file" options="" />
+      <module name="xiaoli-file-api" options="-parameters" />
+      <module name="xiaoli-file-service" options="-parameters" />
+      <module name="xiaoli-gateway" options="-parameters" />
+      <module name="xiaoli-mstemplate" options="" />
+      <module name="xiaoli-mstemplate-api" options="-parameters" />
+      <module name="xiaoli-mstemplate-service" options="-parameters" />
+    </option>
+  </component>
+</project>
