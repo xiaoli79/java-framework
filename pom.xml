@@ -16,6 +16,7 @@
     <modules>
         <module>xiaoli-common</module>
         <module>xiaoli-file</module>
+        <module>xiaoli-admin</module>
     </modules>
     <version>1.0-SNAPSHOT</version>
 
