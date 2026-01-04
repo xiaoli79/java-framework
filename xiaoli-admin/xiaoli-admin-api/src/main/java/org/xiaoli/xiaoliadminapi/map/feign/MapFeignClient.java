@@ -6,6 +6,7 @@ import org.xiaoli.xiaoliadminapi.map.domain.vo.RegionVO;
 import org.xiaoli.xiaolicommondomain.domain.R;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -20,5 +21,14 @@ public interface MapFeignClient {
      */
     @GetMapping("/map/city_list")
     R<List<RegionVO>> getCityList();
+
+
+    /**
+     * 城市拼音归类查询
+     * @return
+     */
+
+    @GetMapping("/map/city_pinyin_list")
+    R<Map<String,List<RegionVO>>> getCityPinyinList();
 
 }

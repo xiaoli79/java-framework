@@ -14,9 +14,10 @@ import org.xiaoli.xiaoliadminservice.map.service.IXiaoliMapService;
 import org.xiaoli.xiaolicommoncache.utils.CacheUtil;
 import org.xiaoli.xiaolicommonredis.service.RedisService;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
 
 
 @Service
@@ -48,6 +49,35 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
         List<SysRegion> list = regionMapper.selectAllRegion();
 //      在服务启动期间,缓存城市列表~~
         loadCityInfo(list);
+//      在服务启动期间,缓存拼音归类的城市列表~~
+        loadCityPinyinInfo(list);
+    }
+
+    private void loadCityPinyinInfo(List<SysRegion> list) {
+
+//      这是来记录其值!!
+        Map<String,List<SysRegionDTO>> result = new LinkedHashMap<>();
+
+        for(SysRegion sysRegion : list){
+            if(sysRegion.getLevel().equals(MapConstants.CITY_LEVEL)){
+                SysRegionDTO sysRegionDTO = new SysRegionDTO();
+                BeanUtils.copyProperties(sysRegion,sysRegionDTO);
+                String cityPinyin = sysRegion.getPinyin().toUpperCase().substring(0,1);
+
+                if(result.containsKey(cityPinyin)) {
+                    result.get(cityPinyin).add(sysRegionDTO);
+                }else{
+//                 先对列表进行初始化
+                    List<SysRegionDTO> regionDtoList = new ArrayList<>();
+//                 然后添加一下~~
+                    regionDtoList.add(sysRegionDTO);
+//                 放入其值
+                    result.put(cityPinyin,regionDtoList);
+                }
+            }
+        }
+//      构建缓存
+        CacheUtil.setL2Cache(redisService,MapConstants.CACHE_MAP_CITY_PINYIN_KEY,result,caffeineCache,120L,TimeUnit.MINUTES);
     }
 
     /**
@@ -158,6 +188,12 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
     @Override
     public List<SysRegionDTO> getCityList() {
         List<SysRegionDTO> cache = CacheUtil.getL2Cache(redisService,MapConstants.CACHE_MAP_CITY_KEY,new TypeReference<List<SysRegionDTO>>() {},caffeineCache);
+        return cache;
+    }
+
+    @Override
+    public Map<String, List<SysRegionDTO>> getCityPinyinList() {
+        Map<String, List<SysRegionDTO>> cache = CacheUtil.getL2Cache(redisService,MapConstants.CACHE_MAP_CITY_PINYIN_KEY,new TypeReference<Map<String,List<SysRegionDTO>>>() {},caffeineCache);
         return cache;
     }
 }
