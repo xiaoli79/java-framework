@@ -1,6 +1,8 @@
 package org.xiaoli.xiaoliadminservice.map.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.github.benmanes.caffeine.cache.Cache;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -9,22 +11,90 @@ import org.xiaoli.xiaoliadminservice.map.domain.dto.SysRegionDTO;
 import org.xiaoli.xiaoliadminservice.map.domain.entity.SysRegion;
 import org.xiaoli.xiaoliadminservice.map.mapper.RegionMapper;
 import org.xiaoli.xiaoliadminservice.map.service.IXiaoliMapService;
+import org.xiaoli.xiaolicommoncache.utils.CacheUtil;
 import org.xiaoli.xiaolicommonredis.service.RedisService;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 
 
 @Service
 public class XiaoliMapServiceImpl implements IXiaoliMapService {
 
+    /**
+     * sys_region的mapper
+     */
     @Autowired
     private RegionMapper regionMapper;
+
+    /**
+     * redis服务对象
+     */
     @Autowired
     private RedisService redisService;
 
-    @Override
-    public List<SysRegionDTO> getCityList() {
+    /**
+     * 本地内存服务对象~~
+     */
+    @Autowired
+    private Cache<String,Object> caffeineCache;
+
+
+
+    @PostConstruct
+    public void initCityMap(){
+//      查询数据库!!
+        List<SysRegion> list = regionMapper.selectAllRegion();
+//      在服务启动期间,缓存城市列表~~
+        loadCityInfo(list);
+    }
+
+    /**
+     * 直接通过mysql来进行查询
+     * @param list
+     */
+    private void loadCityInfo(List<SysRegion> list) {
+        List<SysRegionDTO> result = new ArrayList<>();
+
+//      SysRegion这个类转换成sysRegion~~
+        for (SysRegion sysRegion : list) {
+            if(sysRegion.getLevel().equals(MapConstants.CITY_LEVEL)){
+                SysRegionDTO sysRegionDTO = new SysRegionDTO();
+                BeanUtils.copyProperties(sysRegion,sysRegionDTO);
+                result.add(sysRegionDTO);
+            }
+        }
+//      设置缓存
+        CacheUtil.setL2Cache(redisService,MapConstants.CACHE_MAP_CITY_KEY,result,caffeineCache,120L,TimeUnit.MINUTES);
+    }
+
+    /**
+     * 城市列表查询 V1
+     * @return 城市列表信息
+     */
+    public List<SysRegionDTO> getCityListV1() {
+        // 1 声明一个空列表
+        List<SysRegionDTO> result = new ArrayList<>();
+        // 2 查询数据库
+        List<SysRegion> list =  regionMapper.selectAllRegion();
+        // 3 提取城市数据列表,并且做对象转换
+        for (SysRegion sysRegion : list) {
+            if (sysRegion.getLevel().equals(MapConstants.CITY_LEVEL)) {
+                SysRegionDTO sysRegionDTO = new SysRegionDTO();
+                BeanUtils.copyProperties(sysRegion, sysRegionDTO);
+                result.add(sysRegionDTO);
+            }
+        }
+        return result;
+    }
+
+
+    /**
+     * 通过mysql和redis来进行查询地图列表信息
+     * @return
+     */
+    public List<SysRegionDTO> getCityListV2() {
 //       声明一个空列表
         List<SysRegionDTO> result = new ArrayList<>();
 //       查询数据库
@@ -47,9 +117,47 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
 //      设置缓存
         redisService.setCacheObject(MapConstants.CACHE_MAP_CITY_KEY,result);
         return result;
+    }
+
+    /**
+     * 通过mysql和redis以及二级缓存来进行相应的查询操作！！
+     * @return
+     */
+    public List<SysRegionDTO> getCityListV3() {
+
+//       声明一个空列表
+        List<SysRegionDTO> result = new ArrayList<>();
+//      获取二级缓存，也就是本地缓存
+        List<SysRegionDTO> cache = CacheUtil.getL2Cache(redisService,MapConstants.CACHE_MAP_CITY_KEY,new TypeReference<List<SysRegionDTO>>() {},caffeineCache);
+        if(cache != null){
+            return cache;
+        }
+
+//      从数据库中查询数据
+        List<SysRegion> list = regionMapper.selectAllRegion();
+//       提取城市数据列表，并且做对象转换
+        for(SysRegion sysRegion : list){
+            if(sysRegion.getLevel().equals(MapConstants.CITY_LEVEL)){
+                SysRegionDTO sysRegionDTO = new SysRegionDTO();
+                BeanUtils.copyProperties(sysRegion,sysRegionDTO);
+                result.add(sysRegionDTO);
+            }
+        }
+
+//      设置缓存
+        CacheUtil.setL2Cache(redisService,MapConstants.CACHE_MAP_CITY_KEY,result,caffeineCache,120L, TimeUnit.MINUTES);
+        return result;
+
+    }
 
 
-
-
+    /**
+     * 缓存预热方案~~避免刚开始请求量过多直接把数据库给压爆~~
+     * @return
+     */
+    @Override
+    public List<SysRegionDTO> getCityList() {
+        List<SysRegionDTO> cache = CacheUtil.getL2Cache(redisService,MapConstants.CACHE_MAP_CITY_KEY,new TypeReference<List<SysRegionDTO>>() {},caffeineCache);
+        return cache;
     }
 }

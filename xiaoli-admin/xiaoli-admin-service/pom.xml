@@ -70,7 +70,6 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
-
         <dependency>
             <groupId>org.xiaoli</groupId>
             <artifactId>xiaoli-admin-api</artifactId>
@@ -80,6 +79,12 @@
         <dependency>
             <groupId>org.xiaoli</groupId>
             <artifactId>xiaoli-common-redis</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.xiaoli</groupId>
+            <artifactId>xiaoli-common-cache</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
