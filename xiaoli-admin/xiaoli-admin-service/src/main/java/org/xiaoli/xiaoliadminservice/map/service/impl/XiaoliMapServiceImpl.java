@@ -196,4 +196,41 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
         Map<String, List<SysRegionDTO>> cache = CacheUtil.getL2Cache(redisService,MapConstants.CACHE_MAP_CITY_PINYIN_KEY,new TypeReference<Map<String,List<SysRegionDTO>>>() {},caffeineCache);
         return cache;
     }
+
+
+    /**
+     * 根据父级ID，查询子级相关的信息
+     * @param parentId
+     * @return
+     */
+    @Override
+    public List<SysRegionDTO> getRegionChildren(Long parentId) {
+
+        String key = MapConstants.CACHE_MAP_CITY_CHILDREN_KEY + parentId;
+//      查询缓存
+        List<SysRegionDTO> l2Cache = CacheUtil.getL2Cache(redisService, key, new TypeReference<List<SysRegionDTO>>() {
+        }, caffeineCache);
+        if(l2Cache != null){
+            return l2Cache;
+        }
+
+        List<SysRegionDTO> result = new ArrayList<>();
+//      查询数据库
+        List<SysRegion> sysRegions = regionMapper.selectAllRegion();
+
+//      并把相应的数据转换为DTO
+        for (SysRegion sysRegion : sysRegions) {
+//          这样是避免空指针异常的方式~~
+            if(parentId.equals(sysRegion.getParentId())){
+                SysRegionDTO sysRegionDTO = new SysRegionDTO();
+                BeanUtils.copyProperties(sysRegion,sysRegionDTO);
+                result.add(sysRegionDTO);
+            }
+        }
+
+//      设置缓存
+        CacheUtil.setL2Cache(redisService,key,result,caffeineCache,120L, TimeUnit.MINUTES);
+//      返回其值！！
+        return result;
+    }
 }

@@ -23,4 +23,8 @@ public class MapConstants {
 
 
 
+    public static final String CACHE_MAP_CITY_CHILDREN_KEY = "map:city:children";
+
+
+
 }

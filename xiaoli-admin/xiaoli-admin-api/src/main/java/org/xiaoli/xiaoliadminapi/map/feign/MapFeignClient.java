@@ -2,6 +2,7 @@ package org.xiaoli.xiaoliadminapi.map.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.xiaoli.xiaoliadminapi.map.domain.vo.RegionVO;
 import org.xiaoli.xiaolicommondomain.domain.R;
 
@@ -31,4 +32,12 @@ public interface MapFeignClient {
     @GetMapping("/map/city_pinyin_list")
     R<Map<String,List<RegionVO>>> getCityPinyinList();
 
+
+    /**
+     * 根据父级ID查询子级相关的信息
+     * @param parentId
+     * @return
+     */
+    @GetMapping("/map/region_children_list")
+    R<List<RegionVO>> regionChildren(@RequestParam Long parentId);
 }

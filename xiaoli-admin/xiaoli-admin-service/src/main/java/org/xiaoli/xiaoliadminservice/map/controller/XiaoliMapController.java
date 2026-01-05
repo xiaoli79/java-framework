@@ -2,6 +2,7 @@ package org.xiaoli.xiaoliadminservice.map.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.xiaoli.xiaoliadminapi.map.domain.vo.RegionVO;
 import org.xiaoli.xiaoliadminapi.map.feign.MapFeignClient;
@@ -34,7 +35,7 @@ public class XiaoliMapController implements MapFeignClient {
 
 
     /**
-     * 根据城市拼音归类查询
+     * 根据城市拼音归类查询x
      * @return
      */
     @Override
@@ -45,5 +46,21 @@ public class XiaoliMapController implements MapFeignClient {
             result.put(entry.getKey(),BeanCopyUtil.copyList(entry.getValue(),RegionVO::new));
         }
         return R.ok(result);
+    }
+
+    /**
+     * 根据父级ID查询子级相关的信息
+     * @param parentId
+     * @return
+     */
+    @Override
+    public R<List<RegionVO>> regionChildren(@RequestParam Long parentId) {
+
+
+        List<SysRegionDTO> list =  xiaoliMapService.getRegionChildren(parentId);
+//      进行对象的转换，将DTO转换为VO
+        List<RegionVO> result = BeanCopyUtil.copyList(list, RegionVO::new);
+        return R.ok(result);
+
     }
 }

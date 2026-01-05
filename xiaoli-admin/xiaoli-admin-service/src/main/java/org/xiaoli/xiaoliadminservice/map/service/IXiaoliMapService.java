@@ -9,9 +9,14 @@ import java.util.Map;
 public interface IXiaoliMapService {
 
 
-
     List<SysRegionDTO> getCityList();
 
 
     Map<String, List<SysRegionDTO>> getCityPinyinList();
+
+
+    List<SysRegionDTO> getRegionChildren(Long parentId);
 }
+
+
+
