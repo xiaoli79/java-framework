@@ -16,5 +16,19 @@ public class MapConstants {
     public static final String CACHE_MAP_CITY_KEY = "map:city:id";
 
 
+    /**
+     * 城市拼音缓存key
+     */
+    public static final String CACHE_MAP_CITY_PINYIN_KEY = "map:city:pinyin";
+
+
+
+    public static final String CACHE_MAP_CITY_CHILDREN_KEY = "map:city:children";
+
+    /**
+     * 获取热门城市
+     */
+    public static final String CACHE_MAP_HOT_CITY = "map:city:hot";
+
 
 }
