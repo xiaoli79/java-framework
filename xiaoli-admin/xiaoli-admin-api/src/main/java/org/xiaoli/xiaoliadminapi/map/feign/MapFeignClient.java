@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.xiaoli.xiaoliadminapi.map.domain.vo.RegionVO;
 import org.xiaoli.xiaolicommondomain.domain.R;
-
 import java.util.List;
 import java.util.Map;
 
@@ -40,4 +39,11 @@ public interface MapFeignClient {
      */
     @GetMapping("/map/region_children_list")
     R<List<RegionVO>> regionChildren(@RequestParam Long parentId);
+
+
+    /**
+     * 获取城市列表
+     */
+    @GetMapping("/map/city_hot_list")
+    R<List<RegionVO>> getHotCityList();
 }

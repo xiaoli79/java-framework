@@ -56,11 +56,18 @@ public class XiaoliMapController implements MapFeignClient {
     @Override
     public R<List<RegionVO>> regionChildren(@RequestParam Long parentId) {
 
-
         List<SysRegionDTO> list =  xiaoliMapService.getRegionChildren(parentId);
 //      进行对象的转换，将DTO转换为VO
         List<RegionVO> result = BeanCopyUtil.copyList(list, RegionVO::new);
         return R.ok(result);
 
+    }
+
+    @Override
+    public R<List<RegionVO>> getHotCityList() {
+        List<SysRegionDTO> hotCityList = xiaoliMapService.getHotCityList();
+//      这是把SysRegionDTO转变为RegionVO~~
+        List<RegionVO> result = BeanCopyUtil.copyList(hotCityList, RegionVO::new);
+        return R.ok(result);
     }
 }

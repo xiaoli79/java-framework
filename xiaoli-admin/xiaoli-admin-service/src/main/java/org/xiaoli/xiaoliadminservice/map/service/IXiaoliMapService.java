@@ -16,6 +16,8 @@ public interface IXiaoliMapService {
 
 
     List<SysRegionDTO> getRegionChildren(Long parentId);
+
+    List<SysRegionDTO> getHotCityList();
 }
 
 

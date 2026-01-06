@@ -233,4 +233,36 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
 //      返回其值！！
         return result;
     }
+
+    @Override
+    public List<SysRegionDTO> getHotCityList() {
+
+
+//      查询还二级缓存
+        List<SysRegionDTO> l2Cache = CacheUtil.getL2Cache(redisService, MapConstants.CACHE_MAP_HOT_CITY, new TypeReference<List<SysRegionDTO>>() {
+        }, caffeineCache);
+        if(l2Cache != null){
+            return l2Cache;
+        }
+//      这是热门城市的ID
+        String ids = "35,108,234,236,289,342";
+        List<Long> idList = new ArrayList<>();
+        for(String id : ids.split(",")){
+            idList.add(Long.valueOf(id));
+        }
+        List<SysRegionDTO> result = new ArrayList<>();
+
+//      regionMapper.selectBatchIds(idList)这个方法是根据ID批量查询城市~~
+        for(SysRegion sysRegion: regionMapper.selectBatchIds(idList)){
+            SysRegionDTO sysRegionDTO = new SysRegionDTO();
+            BeanUtils.copyProperties(sysRegion,sysRegionDTO);
+            result.add(sysRegionDTO);
+        }
+
+//      设置缓存
+        CacheUtil.setL2Cache(redisService,MapConstants.CACHE_MAP_HOT_CITY,result,caffeineCache,120L, TimeUnit.MINUTES);
+
+
+        return result;
+    }
 }
