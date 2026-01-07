@@ -31,4 +31,10 @@ public class MapConstants {
     public static final String CACHE_MAP_HOT_CITY = "map:city:hot";
 
 
+    /**
+     * 根据关键字搜索的接口路由~~
+     */
+    public static final String QQMAP_API_PLACE_SUGGESTION = "/ws/place/v1/suggestion";
+
+
 }
