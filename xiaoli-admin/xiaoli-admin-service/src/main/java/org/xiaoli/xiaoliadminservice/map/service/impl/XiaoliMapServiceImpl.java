@@ -7,11 +7,18 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminapi.map.constants.MapConstants;
-import org.xiaoli.xiaoliadminservice.map.domain.dto.SysRegionDTO;
+import org.xiaoli.xiaoliadminapi.map.domain.dto.LocationReqDTO;
+import org.xiaoli.xiaoliadminapi.map.domain.dto.PlaceSearchReqDTO;
+import org.xiaoli.xiaoliadminservice.map.domain.dto.*;
 import org.xiaoli.xiaoliadminservice.map.domain.entity.SysRegion;
 import org.xiaoli.xiaoliadminservice.map.mapper.RegionMapper;
+import org.xiaoli.xiaoliadminservice.map.service.IMapProvider;
 import org.xiaoli.xiaoliadminservice.map.service.IXiaoliMapService;
 import org.xiaoli.xiaolicommoncache.utils.CacheUtil;
+import org.xiaoli.xiaolicommoncore.domain.dto.BasePageDTO;
+import org.xiaoli.xiaolicommoncore.utils.PageUtil;
+import org.xiaoli.xiaolicommondomain.domain.R;
+import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 import org.xiaoli.xiaolicommonredis.service.RedisService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,6 +47,13 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
      */
     @Autowired
     private Cache<String,Object> caffeineCache;
+
+
+    /**
+     * 腾讯位置服务的服务类
+     */
+    @Autowired
+    private IMapProvider mapProvider;
 
 
 
@@ -234,6 +248,11 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
         return result;
     }
 
+
+    /**
+     * 获取热门城市列表
+     * @return 城市列表
+     */
     @Override
     public List<SysRegionDTO> getHotCityList() {
 
@@ -263,6 +282,76 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
         CacheUtil.setL2Cache(redisService,MapConstants.CACHE_MAP_HOT_CITY,result,caffeineCache,120L, TimeUnit.MINUTES);
 
 
+        return result;
+    }
+
+    /**
+     * 根据地点搜索
+     * @param placeSearchReqDTO 搜索条件
+     * @return 搜索结果
+     */
+    @Override
+    public BasePageDTO<SearchPoiDTO> searchSuggestOnMap(PlaceSearchReqDTO placeSearchReqDTO) {
+
+//      构造查询腾讯位置服务的入参
+        SuggestSearchDTO suggestSearchDTO = new SuggestSearchDTO();
+        BeanUtils.copyProperties(placeSearchReqDTO,suggestSearchDTO);
+        suggestSearchDTO.setPageIndex(placeSearchReqDTO.getPageNo());
+        suggestSearchDTO.setId(String.valueOf(placeSearchReqDTO.getId()));
+
+//      调用相关的方法
+        PoiListDTO poiListDTO = mapProvider.searchQQMapPlaceByRegion(suggestSearchDTO);
+
+//      进行结果对象转换
+        List<PoiDTO> poiDTOList = poiListDTO.getData();
+        BasePageDTO<SearchPoiDTO> result = new BasePageDTO<>();
+        result.setTotals(poiListDTO.getCount());
+        result.setTotalPages(PageUtil.getTotalPages(result.getTotals(),placeSearchReqDTO.getPageSize()));
+        List<SearchPoiDTO> pageRes = new ArrayList<>();
+        for(PoiDTO poiDTO : poiDTOList){
+            SearchPoiDTO searchPoiDTO = new SearchPoiDTO();
+            BeanUtils.copyProperties(poiDTO,searchPoiDTO);
+            searchPoiDTO.setLongitude(poiDTO.getLocation().getLng());
+            searchPoiDTO.setLatitude(poiDTO.getLocation().getLat());
+            pageRes.add(searchPoiDTO);
+        }
+
+        result.setList(pageRes);
+        return result;
+    }
+    /**
+     * 根据经纬度来定位城市
+     * @param locationReqDTO
+     * @return
+     */
+    @Override
+    public RegionCityDTO getCityByLocation(LocationReqDTO locationReqDTO) {
+
+
+//      构建查询腾讯服务的入参
+        LocationDTO locationDTO = new LocationDTO();
+        BeanUtils.copyProperties(locationReqDTO,locationDTO);
+
+        RegionCityDTO result = new RegionCityDTO();
+
+//      调用相关的方法
+        GeoResultDTO geoResultDTO = mapProvider.getQQMapDistrictByLonLat(locationDTO);
+
+//      判断是否为空
+        if(geoResultDTO != null && geoResultDTO.getResult() != null && geoResultDTO.getResult().getAd_info()!= null){
+
+            String cityName =  geoResultDTO.getResult().getAd_info().getCity();
+
+//          查询缓存
+            List<SysRegionDTO> cache = CacheUtil.getL2Cache(redisService,MapConstants.CACHE_MAP_CITY_KEY,new TypeReference<List<SysRegionDTO>>() {},caffeineCache);
+
+            for(SysRegionDTO sysRegionDTO : cache){
+                if(sysRegionDTO.getFullName().equals(cityName)){
+                    BeanUtils.copyProperties(sysRegionDTO,result);
+                    return result;
+                }
+            }
+        }
         return result;
     }
 }

@@ -33,7 +33,7 @@ public class PoiDTO {
     /**
      * poi地点所处坐标
      */
-    private Location location;
+    private LocationDTO location;
 
 
 }

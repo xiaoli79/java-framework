@@ -1,5 +1,6 @@
 package org.xiaoli.xiaoliadminservice.map.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -11,12 +12,14 @@ public class LocationDTO {
     /**
      * 纬度
      */
-    private Double latitude;
+
+    private Double lat;
 
     /**
      * 经度
      */
-    private Double longitude;
+
+    private Double lng;
 
 
     /**
@@ -24,6 +27,6 @@ public class LocationDTO {
      * @return
      */
     public String formatInfo(){
-        return latitude + "," + longitude;
+        return lat + "," + lng;
     }
 }

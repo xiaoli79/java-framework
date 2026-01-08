@@ -37,4 +37,9 @@ public class MapConstants {
     public static final String QQMAP_API_PLACE_SUGGESTION = "/ws/place/v1/suggestion";
 
 
+    /**
+     * 根据经纬度来获取区域信息的接口路由
+     */
+    public final static String QQMAP_GEOCODER = "/ws/geocoder/v1";
+
 }
