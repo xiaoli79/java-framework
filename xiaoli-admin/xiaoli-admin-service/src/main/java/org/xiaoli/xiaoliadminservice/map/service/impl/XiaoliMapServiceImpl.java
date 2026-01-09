@@ -17,8 +17,6 @@ import org.xiaoli.xiaoliadminservice.map.service.IXiaoliMapService;
 import org.xiaoli.xiaolicommoncache.utils.CacheUtil;
 import org.xiaoli.xiaolicommoncore.domain.dto.BasePageDTO;
 import org.xiaoli.xiaolicommoncore.utils.PageUtil;
-import org.xiaoli.xiaolicommondomain.domain.R;
-import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 import org.xiaoli.xiaolicommonredis.service.RedisService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
