@@ -24,12 +24,17 @@ public class SysDictionaryType {
     /**
      * 字典类型编码
      */
-    private String type;
+    private String typeKey;
+
+    /**
+     * 字典类型名称
+     */
+    private String value;
 
     /**
      * 备注
      */
-    private String reamrk;
+    private String remark;
 
 
     /**
