@@ -30,6 +30,7 @@ public class ServiceException extends RuntimeException {
      * @param resultCode
      */
     public ServiceException(ResultCode resultCode) {
+        super(resultCode.getMsg());  // ← 传递给父类
         this.code = resultCode.getCode();
         this.msg = resultCode.getMsg();
     }
@@ -39,6 +40,7 @@ public class ServiceException extends RuntimeException {
      * @param message
      */
     public ServiceException(String message) {
+        super(message);  // ← 传递给父类
         this.code = ResultCode.ERROR.getCode();
         this.msg = message;
     }
@@ -48,8 +50,8 @@ public class ServiceException extends RuntimeException {
      * @param code
      * @param msg
      */
-    public ServiceException(String msg,int code) {
-
+    public ServiceException(String msg, int code) {
+        super(msg);  // ← 传递给父类
         this.code = code;
         this.msg = msg;
     }

@@ -15,31 +15,35 @@ import lombok.Setter;
 @TableName("sys_dictionary_type")
 public class SysDictionaryType {
 
+
     /**
      * 自增主键
      */
     @TableId(value = "id",type = IdType.AUTO)
     private Long id;
 
+
     /**
      * 字典类型编码
      */
     private String typeKey;
+
 
     /**
      * 字典类型名称
      */
     private String value;
 
+
     /**
      * 备注
      */
     private String remark;
 
-
     /**
      * 字典类型状态： 1.正常，0.停用
      */
     private Integer status;
+
 
 }
