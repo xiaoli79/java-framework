@@ -3,10 +3,15 @@ package org.xiaoli.xiaolicommondomain.domain.dto;
 
 import lombok.Data;
 
+/**
+ * 分页查询类的基类~~
+ */
 @Data
 public class BasePageReqDTO {
+
+
     /**
-     * 分页编码
+     * 告诉数据库从哪里开始取数据
      */
     private Integer pageNo = 1;
 
@@ -18,7 +23,7 @@ public class BasePageReqDTO {
     /**
      * 获取偏移
      *
-     * @return 偏移信息
+     * @return 偏移信息  就是从哪个地方开始的~~
      */
     public Integer getOffset() {
         return (pageNo - 1) * pageSize;

@@ -6,6 +6,8 @@ import java.util.List;
 
 @Data
 public class BasePageVO<T> {
+
+
     /**
      * 查询结果总数
      */
