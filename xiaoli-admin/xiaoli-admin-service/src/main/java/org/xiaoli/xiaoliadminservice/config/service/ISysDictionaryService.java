@@ -1,8 +1,11 @@
 package org.xiaoli.xiaoliadminservice.config.service;
 
 
+import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataAddReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeWriteReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryDataVo;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryTypeVO;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 
@@ -35,4 +38,14 @@ public interface ISysDictionaryService {
      * @return Long
      */
     Long editType(DictionaryTypeWriteReqDTO dictionaryTypeWriteReqDTO);
+
+
+    /**
+     * 新增字典类型
+     * @param dictionaryDataAddReqDTO 字典类型的DTO
+     * @return
+     */
+    Long addData(DictionaryDataAddReqDTO dictionaryDataAddReqDTO);
+
+    BasePageVO<DictionaryDataVo> listData(DictionaryDataListReqDTO dictionaryDataListReqDTO);
 }

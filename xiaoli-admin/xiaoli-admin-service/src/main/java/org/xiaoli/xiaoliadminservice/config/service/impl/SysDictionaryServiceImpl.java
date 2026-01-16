@@ -1,15 +1,20 @@
 package org.xiaoli.xiaoliadminservice.config.service.impl;
 
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataAddReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeWriteReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryTypeVO;
+import org.xiaoli.xiaoliadminservice.config.domain.entity.SysDictionaryData;
 import org.xiaoli.xiaoliadminservice.config.domain.entity.SysDictionaryType;
+import org.xiaoli.xiaoliadminservice.config.mapper.SysDictionaryDataMapper;
 import org.xiaoli.xiaoliadminservice.config.mapper.SysDictionaryTypeMapper;
 import org.xiaoli.xiaoliadminservice.config.service.ISysDictionaryService;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
@@ -25,6 +30,16 @@ import java.util.List;
 @Service
 public class SysDictionaryServiceImpl implements ISysDictionaryService {
 
+    /**
+     * 字典类型数据的mapper
+     */
+    @Autowired
+    private SysDictionaryDataMapper sysDictionaryDataMapper;
+
+
+    /**
+     * 字典类型的mapper
+     */
     @Autowired
     private SysDictionaryTypeMapper sysDictionaryTypeMapper;
 
@@ -95,6 +110,11 @@ public class SysDictionaryServiceImpl implements ISysDictionaryService {
         return result;
     }
 
+    /**
+     * 编辑字典类型
+     * @param dictionaryTypeWriteReqDTO 编辑字典类型DTO
+     * @return
+     */
     @Override
     public Long editType(DictionaryTypeWriteReqDTO dictionaryTypeWriteReqDTO) {
         SysDictionaryType sysDictionaryType = sysDictionaryTypeMapper.selectOne(new LambdaQueryWrapper<SysDictionaryType>().eq(SysDictionaryType::getTypeKey, dictionaryTypeWriteReqDTO.getTypeKey()));
@@ -115,5 +135,44 @@ public class SysDictionaryServiceImpl implements ISysDictionaryService {
         sysDictionaryTypeMapper.updateById(sysDictionaryType);
         return sysDictionaryType.getId();
 
+    }
+
+    /**
+     * 新增字典数据
+     * @param dictionaryDataAddReqDTO 字典类型的DTO
+     * @return
+     */
+    @Override
+    public Long addData(DictionaryDataAddReqDTO dictionaryDataAddReqDTO) {
+        SysDictionaryType sysDictionaryType = sysDictionaryTypeMapper.selectOne(new LambdaQueryWrapper<SysDictionaryType>().eq(SysDictionaryType::getTypeKey, dictionaryDataAddReqDTO.getTypeKey()));
+
+        if(sysDictionaryType == null){
+            throw new ServiceException("这个字典类型不存在");
+        }
+
+//      判断字典数据是否存在,这个代码哪里有问题
+        SysDictionaryData sysDictionaryData = (SysDictionaryData) sysDictionaryDataMapper.selectOne(
+                new LambdaQueryWrapper<SysDictionaryData>()
+                        .eq(SysDictionaryData::getDataKey, dictionaryDataAddReqDTO.getDataKey())
+                        .or()
+                        .eq(SysDictionaryData::getValue, dictionaryDataAddReqDTO.getValue())
+        );
+
+        if(sysDictionaryData != null){
+            throw new ServiceException("字典数据键或值已存在");
+        }
+
+        sysDictionaryData = new SysDictionaryData();
+
+        sysDictionaryData.setValue(dictionaryDataAddReqDTO.getValue());
+        sysDictionaryData.setTypeKey(dictionaryDataAddReqDTO.getTypeKey());
+        if(dictionaryDataAddReqDTO.getRemark() != null){
+            sysDictionaryData.setRemark(dictionaryDataAddReqDTO.getRemark());
+        }
+        if(StringUtils.isNotBlank(dictionaryDataAddReqDTO.getValue())){
+            sysDictionaryData.setValue(dictionaryDataAddReqDTO.getValue());
+        }
+        sysDictionaryDataMapper.insert(sysDictionaryData);
+        return sysDictionaryData.getId();
     }
 }
