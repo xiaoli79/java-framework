@@ -9,8 +9,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataAddReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeWriteReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryDataVo;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryTypeVO;
 import org.xiaoli.xiaoliadminservice.config.domain.entity.SysDictionaryData;
 import org.xiaoli.xiaoliadminservice.config.domain.entity.SysDictionaryType;
@@ -35,7 +37,6 @@ public class SysDictionaryServiceImpl implements ISysDictionaryService {
      */
     @Autowired
     private SysDictionaryDataMapper sysDictionaryDataMapper;
-
 
     /**
      * 字典类型的mapper
@@ -174,5 +175,32 @@ public class SysDictionaryServiceImpl implements ISysDictionaryService {
         }
         sysDictionaryDataMapper.insert(sysDictionaryData);
         return sysDictionaryData.getId();
+    }
+
+    @Override
+    public BasePageVO<DictionaryDataVo> listData(DictionaryDataListReqDTO dictionaryDataListReqDTO) {
+
+        BasePageVO<DictionaryDataVo> result = new BasePageVO<>();
+//      需要模糊查询
+        LambdaQueryWrapper<SysDictionaryData> queryWrapper = new LambdaQueryWrapper<>();
+//      这是来判断typeKey是否一致!!!
+        queryWrapper.eq(SysDictionaryData::getTypeKey, dictionaryDataListReqDTO.getTypeKey());
+//      模糊匹配
+        if(StringUtils.isNotBlank(dictionaryDataListReqDTO.getValue())){
+            queryWrapper.likeRight(SysDictionaryData::getValue, dictionaryDataListReqDTO.getValue());
+        }
+//      进行分页查询
+        Page<SysDictionaryData> page = sysDictionaryDataMapper.selectPage(new Page<>(dictionaryDataListReqDTO.getPageNo().longValue(), dictionaryDataListReqDTO.getPageSize().longValue()), queryWrapper);
+        result.setTotals(Integer.parseInt(String.valueOf(page.getTotal())));
+        result.setTotalPages(Integer.parseInt(String.valueOf(page.getPages())));
+
+        List<DictionaryDataVo> list = new ArrayList<>();
+        for(SysDictionaryData sysDictionaryData : page.getRecords()){
+            DictionaryDataVo dictionaryDataVo = new DictionaryDataVo();
+            BeanUtils.copyProperties(sysDictionaryData, dictionaryDataVo);
+            list.add(dictionaryDataVo);
+        }
+        result.setList(list);
+        return result;
     }
 }
