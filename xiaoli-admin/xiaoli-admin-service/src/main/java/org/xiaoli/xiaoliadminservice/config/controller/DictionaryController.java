@@ -1,20 +1,20 @@
 package org.xiaoli.xiaoliadminservice.config.controller;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataAddReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeWriteReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryDataVo;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryTypeVO;
 import org.xiaoli.xiaoliadminservice.config.service.ISysDictionaryService;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
-
-
-
-
 
 /**
  * 字典服务的相关的接口
@@ -54,5 +54,25 @@ public class DictionaryController {
     }
 
 
+    /**
+     * 新增字典数据
+     * @param dictionaryDataAddReqDTO 新增字典数据的DTO
+     * @return Long
+     */
+    @PostMapping("/dictionary_data/add")
+    public R<Long> addData(@RequestBody @Validated DictionaryDataAddReqDTO dictionaryDataAddReqDTO){
+        return R.ok(sysDictionaryService.addData(dictionaryDataAddReqDTO));
+    }
 
+    /**
+     * 查询字典数据
+     * @param dictionaryDataListReqDTO 查询字典数据的DTO
+     * @return
+     */
+    @GetMapping("/dictionary_data/list")
+    public R<BasePageVO<DictionaryDataVo>> listData(@Validated DictionaryDataListReqDTO dictionaryDataListReqDTO){
+        return R.ok(sysDictionaryService.listData(dictionaryDataListReqDTO));
+
+
+    }
 }
