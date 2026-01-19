@@ -3,7 +3,6 @@ package org.xiaoli.xiaoliadminapi.config.domain.dto;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.xiaoli.xiaolicommondomain.domain.dto.BasePageReqDTO;
-import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 
 /**
  * 字典数据列表DTO

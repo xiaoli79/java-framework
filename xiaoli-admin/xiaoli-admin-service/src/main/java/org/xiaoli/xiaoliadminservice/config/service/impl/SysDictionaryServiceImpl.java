@@ -1,17 +1,13 @@
 package org.xiaoli.xiaoliadminservice.config.service.impl;
 
-
+import com.alibaba.nacos.shaded.com.google.common.collect.Maps;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.commons.lang3.StringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataAddReqDTO;
-import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataListReqDTO;
-import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeListReqDTO;
-import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryTypeWriteReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.*;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryDataVo;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.DictionaryTypeVO;
 import org.xiaoli.xiaoliadminservice.config.domain.entity.SysDictionaryData;
@@ -22,7 +18,9 @@ import org.xiaoli.xiaoliadminservice.config.service.ISysDictionaryService;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -178,7 +176,7 @@ public class SysDictionaryServiceImpl implements ISysDictionaryService {
     }
 
     @Override
-    public BasePageVO<DictionaryDataVo> listData(DictionaryDataListReqDTO dictionaryDataListReqDTO) {
+    public BasePageVO<DictionaryDataVo>  listData(DictionaryDataListReqDTO dictionaryDataListReqDTO) {
 
         BasePageVO<DictionaryDataVo> result = new BasePageVO<>();
 //      需要模糊查询
@@ -203,4 +201,119 @@ public class SysDictionaryServiceImpl implements ISysDictionaryService {
         result.setList(list);
         return result;
     }
+
+    @Override
+    public Long editData(DictionaryDataEditDTO dictionaryDataEditDTO) {
+//      根据dataKey来查询字典数据是否存在
+        SysDictionaryData sysDictionaryData = sysDictionaryDataMapper.selectOne(new LambdaQueryWrapper<SysDictionaryData>().eq(SysDictionaryData::getDataKey, dictionaryDataEditDTO.getDataKey()));
+        if(sysDictionaryData == null){
+            throw new ServiceException("字典数据不存在");
+        }
+//      来查询字典数据名称是否存在
+        if(sysDictionaryDataMapper.selectOne(new LambdaQueryWrapper<SysDictionaryData>().ne(SysDictionaryData::getDataKey, dictionaryDataEditDTO.getDataKey()).eq(SysDictionaryData::getValue, dictionaryDataEditDTO.getValue())) != null){
+            throw new ServiceException("字典数据已存在");
+        }
+//      设置其值~~
+        sysDictionaryData.setValue(dictionaryDataEditDTO.getValue());
+        if(StringUtils.isNotBlank(dictionaryDataEditDTO.getValue())){
+            sysDictionaryData.setValue(dictionaryDataEditDTO.getValue());
+        }
+        if(dictionaryDataEditDTO.getRemark() != null){
+            sysDictionaryData.setRemark(dictionaryDataEditDTO.getRemark());
+        }
+        sysDictionaryDataMapper.updateById(sysDictionaryData);
+//      返回
+        return sysDictionaryData.getId();
+    }
+
+
+
+    @Override
+    public List<DictionaryDataDTO> selecDataByType(String typeKey) {
+        List<SysDictionaryData> list = sysDictionaryDataMapper.selectList(new LambdaQueryWrapper<SysDictionaryData>().eq(SysDictionaryData::getTypeKey,typeKey));
+        if(list == null){
+            throw new ServiceException("没有这个字典类型");
+        }
+        List<DictionaryDataDTO> result = new ArrayList<>();
+        for(SysDictionaryData sysDictionaryData : list){
+            DictionaryDataDTO dictionaryDataDTO = new DictionaryDataDTO();
+            BeanUtils.copyProperties(sysDictionaryData, dictionaryDataDTO);
+            result.add(dictionaryDataDTO);
+        }
+        return result;
+    }
+
+
+    /**
+     * 获取多个字典类型下的所有字典数据
+     * @param typeKeys  多个字典类型
+     * @return 哈希，key对应的是字典类型的建，value对应的是字典类型下的所有字典数据
+     */
+    @Override
+    public Map<String, List<DictionaryDataDTO>> selecDataByTypes(List<String> typeKeys) {
+
+//      先把所有的字典数据查询出来~~
+        List<SysDictionaryData> list = sysDictionaryDataMapper.selectList(new LambdaQueryWrapper<SysDictionaryData>().in(SysDictionaryData::getTypeKey,typeKeys));
+        List<DictionaryDataDTO> result = new ArrayList<>();
+        for(SysDictionaryData sysDictionaryData : list){
+            DictionaryDataDTO dictionaryDataDTO = new DictionaryDataDTO();
+            BeanUtils.copyProperties(sysDictionaryData, dictionaryDataDTO);
+            result.add(dictionaryDataDTO);
+        }
+//      把查询出来的结果封装成哈希映射的形式~~
+        Map<String,List<DictionaryDataDTO>> map = Maps.newHashMap();
+        for(DictionaryDataDTO dictionaryDataDTO : result){
+            List<DictionaryDataDTO> value;
+//          先判断当前字典类型业务主键是否在哈希中~~
+            if(map.get(dictionaryDataDTO.getTypeKey()) == null){
+                value = new ArrayList<>();
+                value.add(dictionaryDataDTO);
+                map.put(dictionaryDataDTO.getTypeKey(),value);
+            }else{
+//              当前字典类型业务主键已经在哈希中~~
+                value = map.get(dictionaryDataDTO.getTypeKey());
+                value.add(dictionaryDataDTO);
+            }
+        }
+        return map;
+    }
+
+
+
+
+    /**
+     * 根据字典数据业务主键获取字典数据对象
+     * @param dataKey 字典数据业务主键
+     * @return 字典数据对象
+     */
+    @Override
+    public DictionaryDataDTO getDicDataByKey(String dataKey) {
+
+
+        SysDictionaryData sysDictionaryData = sysDictionaryDataMapper.selectOne(new LambdaQueryWrapper<SysDictionaryData>().eq(SysDictionaryData::getDataKey,dataKey));
+        if(sysDictionaryData == null){
+            throw new ServiceException("字典数据业务主键不存在");
+        }
+        DictionaryDataDTO dictionaryDataDTO = new DictionaryDataDTO();
+        BeanUtils.copyProperties(sysDictionaryData, dictionaryDataDTO);
+        return dictionaryDataDTO;
+    }
+
+    /**
+     * 根据多个字典数据的业务主键获取多个字典数据对象
+     * @param dataKeys
+     * @return
+     */
+    @Override
+    public List<DictionaryDataDTO> getDicDataByKeys(List<String> dataKeys) {
+        List<SysDictionaryData> list = sysDictionaryDataMapper.selectList(new LambdaQueryWrapper<SysDictionaryData>().in(SysDictionaryData::getDataKey,dataKeys));
+        List<DictionaryDataDTO> result = new ArrayList<>();
+        for(SysDictionaryData sysDictionaryData : list){
+            DictionaryDataDTO dictionaryDataDTO = new DictionaryDataDTO();
+            BeanUtils.copyProperties(sysDictionaryData, dictionaryDataDTO);
+            result.add(dictionaryDataDTO);
+        }
+        return result;
+    }
+
 }
