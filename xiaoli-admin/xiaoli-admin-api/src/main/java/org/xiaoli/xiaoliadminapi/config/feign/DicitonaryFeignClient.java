@@ -1,13 +1,11 @@
 package org.xiaoli.xiaoliadminapi.config.feign;
 
-
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.DictionaryDataDTO;
-
 import java.util.List;
 import java.util.Map;
 
@@ -49,9 +47,7 @@ public interface DicitonaryFeignClient {
      * @param dataKeys
      * @return
      */
-    @PostMapping("/dictionary_data/keys")
+    @PostMapping("/dictionary_data/keys/")
     List<DictionaryDataDTO> getDicDataByKeys (@RequestBody List<String> dataKeys);
-
-
 
 }
