@@ -42,4 +42,12 @@ public class MapConstants {
      */
     public final static String QQMAP_GEOCODER = "/ws/geocoder/v1";
 
+
+    /**
+     * 热门城市的键
+     */
+    public final static String CONFIG_KEY = "sys_hot_city";
+
+
+
 }
