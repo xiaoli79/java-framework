@@ -133,4 +133,20 @@ public class SysArgumentServiceImpl implements ISysArgumentService {
         return argumentDTO;
 
     }
+
+    @Override
+    public List<ArgumentDTO> getByConfigKeys(List<String> configKeys) {
+//      1.根据多个参数业务主键来查询多个对象
+        List<SysArgument> sysArguments = sysArgumentMapper.selectList(new LambdaQueryWrapper<SysArgument>().in(SysArgument::getConfigKey,configKeys));
+        if(sysArguments == null){
+            throw new ServiceException("参数键不存在");
+        }
+        List<ArgumentDTO> list = new ArrayList<>();
+        for(SysArgument sysArgument : sysArguments){
+            ArgumentDTO argumentDTO = new ArgumentDTO();
+            BeanUtils.copyProperties(sysArgument,argumentDTO);
+            list.add(argumentDTO);
+        }
+        return list;
+    }
 }

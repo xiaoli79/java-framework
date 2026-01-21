@@ -14,6 +14,8 @@ import org.xiaoli.xiaoliadminservice.config.service.ISysArgumentService;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 
+import java.util.List;
+
 /**
  * 参数服务相关的接口
  */
@@ -68,5 +70,15 @@ public class ArgumentController implements ArgumentFeignCLient {
     @Override
     public ArgumentDTO getByConfigKey(String configKey) {
         return sysArgumentService.getByConfigKey(configKey);
+    }
+
+    /**
+     * 根据多个键来查询多个对象
+     * @param configKeys
+     * @return
+     */
+    @Override
+    public List<ArgumentDTO> getByConfigKeys(List<String> configKeys) {
+        return sysArgumentService.getByConfigKeys(configKeys);
     }
 }

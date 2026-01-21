@@ -9,6 +9,8 @@ import org.xiaoli.xiaoliadminapi.config.domain.vo.ArgumentVO;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 
+import java.util.List;
+
 public interface ISysArgumentService {
 
     /**
@@ -28,4 +30,6 @@ public interface ISysArgumentService {
     Long editArgument(ArgumentEditReqDTO argumentEditReqDTO);
 
     ArgumentDTO getByConfigKey(String configKey);
+
+    List<ArgumentDTO> getByConfigKeys(List<String> configKeys);
 }
