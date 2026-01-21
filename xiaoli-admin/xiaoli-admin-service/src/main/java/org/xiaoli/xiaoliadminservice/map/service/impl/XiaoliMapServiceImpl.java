@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminapi.map.constants.MapConstants;
 import org.xiaoli.xiaoliadminapi.map.domain.dto.LocationReqDTO;
 import org.xiaoli.xiaoliadminapi.map.domain.dto.PlaceSearchReqDTO;
+import org.xiaoli.xiaoliadminservice.config.service.ISysArgumentService;
 import org.xiaoli.xiaoliadminservice.map.domain.dto.*;
 import org.xiaoli.xiaoliadminservice.map.domain.entity.SysRegion;
 import org.xiaoli.xiaoliadminservice.map.mapper.RegionMapper;
@@ -52,6 +53,10 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
      */
     @Autowired
     private IMapProvider mapProvider;
+
+
+    @Autowired
+    private ISysArgumentService sysArgumentService;
 
 
 
@@ -262,7 +267,8 @@ public class XiaoliMapServiceImpl implements IXiaoliMapService {
             return l2Cache;
         }
 //      这是热门城市的ID
-        String ids = "35,108,234,236,289,342";
+        String ids = sysArgumentService.getByConfigKey(MapConstants.CONFIG_KEY).getValue();
+
         List<Long> idList = new ArrayList<>();
         for(String id : ids.split(",")){
             idList.add(Long.valueOf(id));

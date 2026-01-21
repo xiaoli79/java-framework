@@ -7,6 +7,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentAddReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentEditReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.ArgumentVO;
@@ -116,5 +117,36 @@ public class SysArgumentServiceImpl implements ISysArgumentService {
 //      5.执行相应的操作
         sysArgumentMapper.updateById(sysArgument);
         return sysArgument.getId();
+    }
+
+
+
+//  根据参数的键来返回其对象
+    @Override
+    public ArgumentDTO getByConfigKey(String configKey) {
+        SysArgument sysArgument = sysArgumentMapper.selectOne(new LambdaQueryWrapper<SysArgument>().eq(SysArgument::getConfigKey,configKey));
+        if(sysArgument == null){
+            throw new ServiceException("这个参数键不存在");
+        }
+        ArgumentDTO argumentDTO = new ArgumentDTO();
+        BeanUtils.copyProperties(sysArgument,argumentDTO);
+        return argumentDTO;
+
+    }
+
+    @Override
+    public List<ArgumentDTO> getByConfigKeys(List<String> configKeys) {
+//      1.根据多个参数业务主键来查询多个对象
+        List<SysArgument> sysArguments = sysArgumentMapper.selectList(new LambdaQueryWrapper<SysArgument>().in(SysArgument::getConfigKey,configKeys));
+        if(sysArguments == null){
+            throw new ServiceException("参数键不存在");
+        }
+        List<ArgumentDTO> list = new ArrayList<>();
+        for(SysArgument sysArgument : sysArguments){
+            ArgumentDTO argumentDTO = new ArgumentDTO();
+            BeanUtils.copyProperties(sysArgument,argumentDTO);
+            list.add(argumentDTO);
+        }
+        return list;
     }
 }
