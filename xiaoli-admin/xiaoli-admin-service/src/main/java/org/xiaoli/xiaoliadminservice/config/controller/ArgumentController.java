@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentAddReqDTO;
+import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentEditReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.dto.ArgumentListReqDTO;
 import org.xiaoli.xiaoliadminapi.config.domain.vo.ArgumentVO;
+import org.xiaoli.xiaoliadminapi.config.feign.ArgumentFeignCLient;
 import org.xiaoli.xiaoliadminservice.config.service.ISysArgumentService;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
@@ -18,7 +20,7 @@ import org.xiaoli.xiaolicommondomain.domain.vo.BasePageVO;
 
 @RestController
 @RequestMapping("/argument")
-public class ArgumentController {
+public class ArgumentController implements ArgumentFeignCLient {
 
 
 
@@ -57,4 +59,14 @@ public class ArgumentController {
         return R.ok(sysArgumentService.editArgument(argumentEditReqDTO));
     }
 
+
+    /**
+     * 根据参数键来查询参数的对象
+     * @param configKey
+     * @return
+     */
+    @Override
+    public ArgumentDTO getByConfigKey(String configKey) {
+        return sysArgumentService.getByConfigKey(configKey);
+    }
 }
