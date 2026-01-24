@@ -3,7 +3,7 @@ package org.xiaoli.xiaolicommonsecurity.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.xiaoli.xiaolicommoncore.utils.ServletUtil;
-import org.xiaoli.xiaolicommondomain.constants.SecurityCosntants;
+import org.xiaoli.xiaolicommondomain.constants.SecurityConstants;
 
 /**
  *安全工具类
@@ -26,7 +26,7 @@ public class SecurityUtil {
      * @return token信息
      */
     public static String getToken(HttpServletRequest request){
-        String token = request.getHeader(SecurityCosntants.AUTHENTICATION);
+        String token = request.getHeader(SecurityConstants.AUTHENTICATION);
         return token;
     }
 }

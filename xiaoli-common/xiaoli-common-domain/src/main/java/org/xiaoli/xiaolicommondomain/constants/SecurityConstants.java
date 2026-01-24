@@ -4,7 +4,7 @@ package org.xiaoli.xiaolicommondomain.constants;
 /**
  * 安全相关的常量
  */
-public class SecurityCosntants {
+public class SecurityConstants {
 
 
     /**
