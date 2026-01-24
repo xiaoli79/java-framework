@@ -5,7 +5,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaolicommoncache.utils.CacheUtil;
-import org.xiaoli.xiaolicommondomain.constants.CacheConstant;
+import org.xiaoli.xiaolicommondomain.constants.CacheConstants;
 import org.xiaoli.xiaolicommonredis.service.RedisService;
 import org.xiaoli.xiaolimstemplateservice.service.IClothService;
 
@@ -26,7 +26,7 @@ public class IClothServiceImpl implements IClothService {
     @Override
     public Integer clothPriceGet(Long proId) {
 
-        String key = CacheConstant.CLOTH_key + proId;
+        String key = CacheConstants.CLOTH_key + proId;
 //      这个方法中先从一级缓存中查询数据,若没查到,则从二级缓存查询数据,并且把二级缓存中查询到数据存储到一级缓存中~~
         Integer price = CacheUtil.getL2Cache(redisService, key, new TypeReference<Integer>() {
         }, cache);
@@ -41,7 +41,7 @@ public class IClothServiceImpl implements IClothService {
     private Integer getPriceFromDB(Long proId) {
         //通过sql中查出指定商品的平均价格
         Integer price = 100;
-        String key = CacheConstant.CLOTH_key + proId;
+        String key = CacheConstants.CLOTH_key + proId;
 //      把从db中查询的数据存储到二级缓存和一级缓存
         CacheUtil.setL2Cache(redisService,key,price,cache,120L, TimeUnit.SECONDS);
         return price;
