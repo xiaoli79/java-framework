@@ -14,9 +14,9 @@ public class AESUtil {
 
 
     /**
-     * 前后端规定的密钥
+     * 前后端规定的秘钥
      */
-    private static final byte[]  KEYS = "xiaoli6661234567".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] KEYS = "12345678abcdefgh".getBytes(StandardCharsets.UTF_8);
 
 
     /**

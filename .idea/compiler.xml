@@ -6,23 +6,28 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="xiaoli-common-rabbitmq" />
-        <module name="xiaoli-common-cache" />
         <module name="xiaoli-mstemplate-service" />
+        <module name="xiaoli-file-api" />
+        <module name="xiaoli-common-core" />
+        <module name="xiaoli-common-security" />
+        <module name="xiaoli-common-rabbitmq" />
+        <module name="xiaoli-admin-api" />
+        <module name="xiaoli-common-cache" />
         <module name="xiaoli-common-domain" />
         <module name="xiaoli-gateway" />
-        <module name="xiaoli-file-api" />
         <module name="xiaoli-file-service" />
-        <module name="xiaoli-common-core" />
+        <module name="xiaoli-admin-service" />
         <module name="xiaoli-mstemplate-api" />
         <module name="xiaoli-common-redis" />
-        <module name="xiaoli-common-security" />
       </profile>
     </annotationProcessing>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="java-framework" options="" />
+      <module name="xiaoli-admin" options="" />
+      <module name="xiaoli-admin-api" options="-parameters" />
+      <module name="xiaoli-admin-service" options="-parameters" />
       <module name="xiaoli-common" options="" />
       <module name="xiaoli-common-cache" options="-parameters" />
       <module name="xiaoli-common-core" options="-parameters" />

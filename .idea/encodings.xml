@@ -5,6 +5,10 @@
     <file url="file://$APPLICATION_HOME_DIR$/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xiaoli-admin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xiaoli-admin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xiaoli-admin/xiaoli-admin-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/xiaoli-admin/xiaoli-admin-service/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xiaoli-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xiaoli-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/xiaoli-common/xiaoli-common-cache/src/main/java" charset="UTF-8" />

@@ -11,9 +11,6 @@ public class AESTest {
 
     @Test
     void testEncrypt(){
-        String password = "123666";
-
-        System.out.println(AESUtil.encryptHex(password));
-        System.out.println(AESUtil.decryptHex(AESUtil.encryptHex(password)));
+        System.out.println(AESUtil.decryptHex("e64c5f44dc95e4ca77d99136ea2c88c6"));
     }
 }
