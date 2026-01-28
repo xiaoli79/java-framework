@@ -5,7 +5,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xiaoli.xiaoliadminservice.config.service.ISysDictionaryService;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.PasswordLoginDTO;
+import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserDTO;
+import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserListReqDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
 import org.xiaoli.xiaoliadminservice.user.mappper.SysUserMapper;
 import org.xiaoli.xiaoliadminservice.user.service.ISysUserService;
@@ -16,6 +19,9 @@ import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 import org.xiaoli.xiaolicommonsecurity.domain.dto.LoginUserDTO;
 import org.xiaoli.xiaolicommonsecurity.domain.dto.TokenDTO;
 import org.xiaoli.xiaolicommonsecurity.service.TokenService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -28,6 +34,10 @@ public class SysUserServiceImpl implements ISysUserService {
 
     @Autowired
     private TokenService tokenService;
+
+
+    @Autowired
+    private ISysDictionaryService sysDictionaryService;
 
 
     /**
@@ -69,5 +79,103 @@ public class SysUserServiceImpl implements ISysUserService {
         loginUserDTO.setUserFrom("sys");
         return tokenService.createToken(loginUserDTO);
 
+    }
+
+
+    /**
+     * 新增与编辑接口的方法
+     * @param sysUserDTO
+     * @return
+     */
+    @Override
+    public Long addOrEdit(SysUserDTO sysUserDTO) {
+
+//      创建一个空的sysUser对象
+        SysUser sysUser = new SysUser();
+
+//      处理新增的逻辑
+        if(sysUserDTO.getUserId() == null){
+//          校验手机号
+            if(!VerifyUtil.checkPhone(sysUserDTO.getPhoneNumber())){
+                throw new ServiceException("手机号格式错误", ResultCode.INVALID_PARA.getCode());
+            }
+//          校验密码
+            if(StringUtils.isEmpty(sysUserDTO.getPassword()) || !sysUserDTO.checkPassword(sysUserDTO.getPassword())){
+                throw new ServiceException("校验密码不通过",ResultCode.INVALID_PARA.getCode());
+            }
+
+//          检查手机号是否是唯一的~~
+            if(sysUserMapper.selectOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhoneNumber, AESUtil.encryptHex(sysUserDTO.getPhoneNumber())))!=null){
+                throw new ServiceException("手机号已经被占用",ResultCode.INVALID_PARA.getCode());
+            }
+
+//          判断用户信息
+            if(StringUtils.isEmpty(sysUserDTO.getIdentity()) || sysDictionaryService.getDicDataByKey(sysUserDTO.getIdentity()) == null){
+                throw new ServiceException("用户身份错误",ResultCode.INVALID_PARA.getCode());
+            }
+//          判断完成后执行用户新增逻辑
+            sysUser.setPhoneNumber(AESUtil.encryptHex(sysUserDTO.getPhoneNumber()));
+            sysUser.setPassword(DigestUtils.sha256Hex(sysUserDTO.getPassword()));
+            sysUser.setIdentity(sysUserDTO.getIdentity());
+        }
+        sysUser.setId(sysUserDTO.getUserId());
+        sysUser.setNickName(sysUserDTO.getNickName());
+
+//      判断用户状态
+        if(sysDictionaryService.getDicDataByKey(sysUserDTO.getStatus()) == null){
+            throw new ServiceException("用户状态错误",ResultCode.INVALID_PARA.getCode());
+        }
+        sysUser.setStatus(sysUserDTO.getStatus());
+        sysUser.setRemark(sysUserDTO.getRemark());
+        sysUserMapper.insertOrUpdate(sysUser);
+
+//      踢人
+        if(sysUserDTO.getUserId() != null && "disable".equals(sysUserDTO.getStatus())) {
+            tokenService.delLoginUser(sysUserDTO.getUserId(),"sys");
+        }
+
+
+        return sysUser.getId();
+    }
+
+
+    /**
+     * 查看B端用户的接口
+     * @param sysUserListReqDTO
+     * @return
+     */
+    @Override
+    public List<SysUserDTO> getUserList(SysUserListReqDTO sysUserListReqDTO) {
+        SysUser searchSysUser = new SysUser();
+
+//      设置其值
+        if(sysUserListReqDTO.getUserId() != null){
+            searchSysUser.setId(sysUserListReqDTO.getUserId());
+        }
+        if(StringUtils.isNotEmpty(sysUserListReqDTO.getStatus())){
+            searchSysUser.setStatus(sysUserListReqDTO.getStatus());
+        }
+        if(StringUtils.isNotEmpty(sysUserListReqDTO.getPhoneNumber())){
+            searchSysUser.setPhoneNumber(AESUtil.encryptHex(sysUserListReqDTO.getPhoneNumber()));
+        }
+
+
+
+//      执行查询sql
+        List<SysUser> sysUserList = sysUserMapper.selectList(searchSysUser);
+
+//      对查询结果封装转换
+        return sysUserList.stream().map(sysUser->{
+            SysUserDTO sysUserDTO = new SysUserDTO();
+            sysUserDTO.setUserId(sysUser.getId());
+            sysUserDTO.setPhoneNumber(AESUtil.decryptHex(sysUser.getPhoneNumber()
+            ));
+            sysUserDTO.setNickName(sysUser.getNickName());
+            sysUserDTO.setStatus(sysUser.getStatus());
+            sysUserDTO.setRemark(sysUser.getRemark());
+            sysUser.setIdentity(sysUser.getIdentity());
+            return sysUserDTO;
+
+        }).collect(Collectors.toList());
     }
 }
