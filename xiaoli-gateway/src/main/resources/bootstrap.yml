@@ -4,6 +4,8 @@ spring:
     name: xiaoli-gateway
   profiles:
     active: ${RUN_ENV}
+  main:
+    web-application-type: reactive
   cloud:
     nacos:
       discovery:
@@ -22,10 +24,6 @@ spring:
             refresh: true
           - data-id: share-common-${spring.profiles.active}.${spring.cloud.nacos.config.file-extension}
             refresh: true
-
-
-
-
 
 # 这一配置用于定义应用在控制台输出日志时所遵循的格式规则
 logging:

@@ -1,7 +1,11 @@
 package org.xiaoli.xiaoliadminservice.user.service;
 
 import org.xiaoli.xiaoliadminservice.user.domain.dto.PasswordLoginDTO;
+import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserDTO;
+import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserListReqDTO;
 import org.xiaoli.xiaolicommonsecurity.domain.dto.TokenDTO;
+
+import java.util.List;
 
 
 /**
@@ -18,5 +22,17 @@ public interface ISysUserService {
      */
     TokenDTO login(PasswordLoginDTO passwordLoginDTO);
 
+    /**
+     * B端用户新增或编辑
+     * @param sysUserDTO
+     * @return
+     */
+    Long addOrEdit(SysUserDTO sysUserDTO);
 
+    /**
+     * B端用户的查询
+     * @param sysUserListReqDTO
+     * @return
+     */
+    List<SysUserDTO> getUserList(SysUserListReqDTO sysUserListReqDTO);
 }

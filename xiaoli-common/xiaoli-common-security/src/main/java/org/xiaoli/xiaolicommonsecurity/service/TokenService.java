@@ -70,9 +70,10 @@ public class TokenService {
      */
     public TokenDTO createToken(LoginUserDTO loginUserDTO) {
 
-//      1.随机产生用户标识
+//      1.随机产生用户标识 这里面的token是UUID的token，这是用来缓存key的
         String token = UUID.randomUUID().toString();
         loginUserDTO.setToken(token);
+//      2.进行缓存
         refreshToken(loginUserDTO);
 
 //      2.生成原始数据声明
@@ -82,6 +83,7 @@ public class TokenService {
         claimMap.put(SecurityConstants.USERNAME,loginUserDTO.getUserName());
         claimMap.put(SecurityConstants.USER_FROM,loginUserDTO.getUserFrom());
 //      3.生成TokenDTO
+//      这是响应的accessToken~~
         TokenDTO tokenDTO = new TokenDTO();
         tokenDTO.setAccessToken(JwtUtil.createToken(claimMap));
         tokenDTO.setExpires(EXPIRE_TIME);
@@ -199,9 +201,7 @@ public class TokenService {
 //      生成loginUserDTO缓存
         redisService.setCacheObject(userKey,loginUserDTO,EXPIRE_TIME, TimeUnit.MINUTES);
 
-
     }
-
 
     /**
      * 获取token key的信息
@@ -211,8 +211,6 @@ public class TokenService {
     private String getTokenKey(String token) {
         return ACCESS_TOKEN+token;
     }
-
-
 
 
 
