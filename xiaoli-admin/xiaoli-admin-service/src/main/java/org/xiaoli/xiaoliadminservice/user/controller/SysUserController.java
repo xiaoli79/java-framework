@@ -8,6 +8,7 @@ import org.xiaoli.xiaoliadminservice.user.domain.dto.PasswordLoginDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserListReqDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
+import org.xiaoli.xiaoliadminservice.user.domain.vo.SysUserLoginVO;
 import org.xiaoli.xiaoliadminservice.user.domain.vo.SysUserVO;
 import org.xiaoli.xiaoliadminservice.user.service.ISysUserService;
 import org.xiaoli.xiaolicommondomain.domain.R;
@@ -71,6 +72,12 @@ public class SysUserController {
                 .collect(Collectors.toList())
         );
 
+    }
+
+
+    @GetMapping("/login_info/get")
+    public R<SysUserLoginVO> getLoginUser(){
+        return R.ok(iSysUserService.getLoginUser().convertToVO());
     }
 
 }

@@ -33,6 +33,6 @@ public class SecurityConstants {
     /**
      * 授权信息字段
      */
-    public static final String AUTHENTICATION = "Authentication";
+    public static final String AUTHENTICATION = "Authorization";
 
 }

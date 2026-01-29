@@ -5,7 +5,7 @@
 <mapper namespace="org.xiaoli.xiaoliadminservice.user.mappper.SysUserMapper">
 
 
-    <select id="selectList" parameterType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser" resultType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser">
+    <select id="selectUserList" parameterType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser" resultType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser">
         select *from sys_user
         <where>
             <if test="id !=null and id != ''">
