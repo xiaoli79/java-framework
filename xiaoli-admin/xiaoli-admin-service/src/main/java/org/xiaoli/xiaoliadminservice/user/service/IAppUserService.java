@@ -1,0 +1,18 @@
+package org.xiaoli.xiaoliadminservice.user.service;
+
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
+
+
+
+
+public interface IAppUserService {
+
+
+
+    /**
+     * 根据微信注册用户
+     * @param openId 用户微信ID
+     * @return C端用户VO
+     */
+     AppUserDTO registerByOpenId (String openId);
+}

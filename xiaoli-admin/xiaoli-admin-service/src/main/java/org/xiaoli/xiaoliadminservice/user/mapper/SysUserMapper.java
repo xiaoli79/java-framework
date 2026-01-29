@@ -1,4 +1,4 @@
-package org.xiaoli.xiaoliadminservice.user.mappper;
+package org.xiaoli.xiaoliadminservice.user.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper
 public interface SysUserMapper extends BaseMapper<SysUser> {
 
-    List<SysUser> selectList(SysUser sysUser);
+    List<SysUser> selectUserList(SysUser sysUser);
 
 
 

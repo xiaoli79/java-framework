@@ -2,10 +2,10 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="org.xiaoli.xiaoliadminservice.user.mappper.SysUserMapper">
+<mapper namespace="org.xiaoli.xiaoliadminservice.user.mapper.SysUserMapper">
 
 
-    <select id="selectList" parameterType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser" resultType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser">
+    <select id="selectUserList" parameterType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser" resultType="org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser">
         select *from sys_user
         <where>
             <if test="id !=null and id != ''">

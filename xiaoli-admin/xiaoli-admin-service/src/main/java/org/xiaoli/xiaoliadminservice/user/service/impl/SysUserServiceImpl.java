@@ -3,14 +3,16 @@ package org.xiaoli.xiaoliadminservice.user.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminservice.config.service.ISysDictionaryService;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.PasswordLoginDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserListReqDTO;
+import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserLoginDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
-import org.xiaoli.xiaoliadminservice.user.mappper.SysUserMapper;
+import org.xiaoli.xiaoliadminservice.user.mapper.SysUserMapper;
 import org.xiaoli.xiaoliadminservice.user.service.ISysUserService;
 import org.xiaoli.xiaolicommoncore.utils.AESUtil;
 import org.xiaoli.xiaolicommoncore.utils.VerifyUtil;
@@ -60,6 +62,7 @@ public class SysUserServiceImpl implements ISysUserService {
         if(sysUser == null){
             throw new ServiceException("手机号不存在");
         }
+
 //      校验密码
 //      先对密码进行解密
         String password = AESUtil.decryptHex(passwordLoginDTO.getPassword());
@@ -78,9 +81,7 @@ public class SysUserServiceImpl implements ISysUserService {
         loginUserDTO.setUserName(sysUser.getNickName());
         loginUserDTO.setUserFrom("sys");
         return tokenService.createToken(loginUserDTO);
-
     }
-
 
     /**
      * 新增与编辑接口的方法
@@ -159,10 +160,8 @@ public class SysUserServiceImpl implements ISysUserService {
             searchSysUser.setPhoneNumber(AESUtil.encryptHex(sysUserListReqDTO.getPhoneNumber()));
         }
 
-
-
 //      执行查询sql
-        List<SysUser> sysUserList = sysUserMapper.selectList(searchSysUser);
+        List<SysUser> sysUserList = sysUserMapper.selectUserList(searchSysUser);
 
 //      对查询结果封装转换
         return sysUserList.stream().map(sysUser->{
@@ -173,9 +172,37 @@ public class SysUserServiceImpl implements ISysUserService {
             sysUserDTO.setNickName(sysUser.getNickName());
             sysUserDTO.setStatus(sysUser.getStatus());
             sysUserDTO.setRemark(sysUser.getRemark());
-            sysUser.setIdentity(sysUser.getIdentity());
+            sysUserDTO.setIdentity(sysUser.getIdentity());
             return sysUserDTO;
 
         }).collect(Collectors.toList());
+    }
+
+
+    /**
+     * 获取B端用户登录信息
+     * @return B端用户信息DTO
+     */
+    @Override
+    public SysUserLoginDTO getLoginUser() {
+
+
+//      1.获取当前用户
+        LoginUserDTO loginUserDTO = tokenService.getLoginUser();
+
+//      2.进行对象判断
+        if(loginUserDTO == null || loginUserDTO.getUserId() == null){
+            throw new ServiceException("用户令牌有误", ResultCode.INVALID_PARA.getCode());
+        }
+//      3.查询mysql
+        SysUser sysUser = sysUserMapper.selectById(loginUserDTO.getUserId());
+        if(sysUser == null){
+            throw new ServiceException("用户不存在", ResultCode.INVALID_PARA.getCode());
+        }
+        SysUserLoginDTO sysUserLoginDTO = new SysUserLoginDTO();
+        BeanUtils.copyProperties(sysUser, sysUserLoginDTO);
+        BeanUtils.copyProperties(loginUserDTO, sysUserLoginDTO);
+        return sysUserLoginDTO;
+
     }
 }
