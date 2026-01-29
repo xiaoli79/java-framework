@@ -1,4 +1,4 @@
-package org.xiaoli.xiaoliadminservice.user.mappper;
+package org.xiaoli.xiaoliadminservice.user.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;

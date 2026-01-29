@@ -12,7 +12,7 @@ import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserListReqDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserLoginDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
-import org.xiaoli.xiaoliadminservice.user.mappper.SysUserMapper;
+import org.xiaoli.xiaoliadminservice.user.mapper.SysUserMapper;
 import org.xiaoli.xiaoliadminservice.user.service.ISysUserService;
 import org.xiaoli.xiaolicommoncore.utils.AESUtil;
 import org.xiaoli.xiaolicommoncore.utils.VerifyUtil;
