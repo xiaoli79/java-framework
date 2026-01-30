@@ -18,6 +18,7 @@
         <module>xiaoli-common-redis</module>
         <module>xiaoli-common-cache</module>
         <module>xiaoli-common-rabbitmq</module>
+        <module>xiaoli-common-message</module>
     </modules>
 
     <properties>

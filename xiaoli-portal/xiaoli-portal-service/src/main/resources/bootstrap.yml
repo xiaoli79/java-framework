@@ -1,8 +1,8 @@
 server:
-  port: 18081
+  port: 18083
 spring:
   application:
-    name: xiaoli-admin
+    name: xiaoli-portal
   profiles:
     active: ${RUN_ENV}
   main:

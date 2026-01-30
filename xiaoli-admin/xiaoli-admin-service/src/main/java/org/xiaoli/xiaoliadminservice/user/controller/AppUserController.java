@@ -10,6 +10,7 @@ import org.xiaoli.xiaoliadminservice.user.service.IAppUserService;
 import org.xiaoli.xiaolicommondomain.domain.R;
 
 
+
 /**
  * C端用户相关接口实现
  */
@@ -33,7 +34,20 @@ public class AppUserController implements AppUserFeignClient {
     }
 
 
+    /**
+     * 根据openid来查询用户信息
+     * @param openId 用户微信ID
+     * @return C端用户VO
+     */
+    @Override
+    public R<AppUserVO> fingByOpenId(String openId) {
 
+        AppUserDTO appUserDTO = appUserService.findByOpenId(openId);
+        if (appUserDTO == null) {
+            return R.ok();
+        }
+        return R.ok(appUserDTO.convertToVO());
+    }
 
 
 }

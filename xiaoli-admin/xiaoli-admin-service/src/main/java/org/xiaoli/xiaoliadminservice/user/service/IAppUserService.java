@@ -15,4 +15,13 @@ public interface IAppUserService {
      * @return C端用户VO
      */
      AppUserDTO registerByOpenId (String openId);
+
+
+
+    /**
+     * 根据openid来查询用户信息
+     * @param openId 用户微信ID
+     * @return C端用户VO
+     */
+    AppUserDTO findByOpenId(String openId);
 }

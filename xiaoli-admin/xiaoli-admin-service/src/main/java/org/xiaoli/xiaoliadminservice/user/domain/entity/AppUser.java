@@ -1,6 +1,8 @@
 package org.xiaoli.xiaoliadminservice.user.domain.entity;
 
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -25,7 +27,8 @@ public class AppUser extends BaseDO {
     /**
      * 用户手机号
      */
-    private String phoneNumber;
+//    @TableField(insertStrategy = FieldStrategy.IGNORED)
+    private String phoneNumber = null;
 
 
     /**
