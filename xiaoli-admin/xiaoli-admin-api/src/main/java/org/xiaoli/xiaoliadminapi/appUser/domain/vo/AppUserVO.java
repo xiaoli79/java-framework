@@ -1,11 +1,14 @@
 package org.xiaoli.xiaoliadminapi.appUser.domain.vo;
 
+import lombok.Data;
+
 import java.io.Serializable;
 
 
 /**
  * C端用户VO
  */
+@Data
 public class AppUserVO implements Serializable {
 
 

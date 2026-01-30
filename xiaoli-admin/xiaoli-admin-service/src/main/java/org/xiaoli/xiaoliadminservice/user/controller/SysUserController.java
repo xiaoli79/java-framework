@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.PasswordLoginDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.dto.SysUserListReqDTO;
-import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
 import org.xiaoli.xiaoliadminservice.user.domain.vo.SysUserLoginVO;
 import org.xiaoli.xiaoliadminservice.user.domain.vo.SysUserVO;
 import org.xiaoli.xiaoliadminservice.user.service.ISysUserService;
@@ -44,7 +43,7 @@ public class SysUserController {
     @PostMapping("/login")
     public R<TokenVO> login (@Validated @RequestBody PasswordLoginDTO passwordLoginDTO){
         TokenDTO tokenDTO = loginService.login(passwordLoginDTO);
-        return R.ok(tokenDTO.convertTokenVO(tokenDTO));
+        return R.ok(tokenDTO.convertTokenVO());
     }
 
 

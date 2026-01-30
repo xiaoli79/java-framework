@@ -9,6 +9,7 @@ import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.AppUser;
 import org.xiaoli.xiaoliadminservice.user.mapper.AppUserMapper;
 import org.xiaoli.xiaoliadminservice.user.service.IAppUserService;
+import org.xiaoli.xiaolicommoncore.utils.AESUtil;
 import org.xiaoli.xiaolicommondomain.domain.ResultCode;
 import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
@@ -40,13 +41,41 @@ public class AppUserServiceImpl implements IAppUserService {
         AppUser appUser = new AppUser();
         appUser.setOpenId(openId);
         appUser.setAvatar(defaultAvatar);
-        appUser.setNickName("肥波的忠实粉"+(Math.random()*9000) + 1000);
+        appUser.setNickName("肥波的忠实粉"+(int)(Math.random()*9000) + 1000);
+        appUser.setPhoneNumber(null);
 //      执行插入逻辑
         appUserMapper.insert(appUser);
         AppUserDTO appUserDTO = new AppUserDTO();
         BeanUtils.copyProperties(appUser,appUserDTO);
         appUserDTO.setOpenId(openId);
 
+        return appUserDTO;
+    }
+
+
+
+    /**
+     * 根据openid来查询用户信息
+     * @param openId 用户微信ID
+     * @return C端用户VO
+     */
+    @Override
+    public AppUserDTO findByOpenId(String openId) {
+
+        if(StringUtils.isEmpty(openId)){
+            return null;
+        }
+
+        AppUser appUser = appUserMapper.selectById(openId);
+
+        if(appUser == null){
+            return null;
+        }
+
+        AppUserDTO appUserDTO = new AppUserDTO();
+        BeanUtils.copyProperties(appUser,appUserDTO);
+//      处理手机号~~
+        appUserDTO.setPhoneNumber(AESUtil.encryptHex(appUser.getPhoneNumber()));
         return appUserDTO;
     }
 }

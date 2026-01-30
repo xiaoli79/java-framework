@@ -24,10 +24,9 @@ public class TokenDTO {
 
     /**
      * 转化TokenVO
-     * @param tokenDTO
      * @return
      */
-    public TokenVO convertTokenVO(TokenDTO tokenDTO) {
+    public TokenVO convertTokenVO() {
         TokenVO tokenVO = new TokenVO();
         tokenVO.setAccessToken(this.accessToken);
         tokenVO.setExipre(this.expires);
