@@ -18,6 +18,8 @@
         <module>xiaoli-file</module>
         <module>xiaoli-admin</module>
         <module>xiaoli-portal</module>
+        <module>xiaoli-gateway</module>
+        <module>xiaoli-mstemplate</module>
     </modules>
     <version>1.0-SNAPSHOT</version>
 
@@ -43,6 +45,7 @@
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <hutool.version>5.8.25</hutool.version>
         <aliyun.sms.version>3.1.1</aliyun.sms.version>
+        <aliyun.pns.version>2.0.0</aliyun.pns.version>
 
 
 
@@ -145,6 +148,12 @@
                 <groupId>com.aliyun</groupId>
                 <artifactId>dysmsapi20170525</artifactId>
                 <version>${aliyun.sms.version}</version>
+            </dependency>
+<!--        阿里云号码认证服务-->
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>dypnsapi20170525</artifactId>
+                <version>${aliyun.pns.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
