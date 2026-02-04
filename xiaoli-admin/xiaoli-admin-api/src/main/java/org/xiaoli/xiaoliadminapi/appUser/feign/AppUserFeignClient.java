@@ -31,8 +31,4 @@ public interface AppUserFeignClient {
     R<AppUserVO> fingByOpenId (@RequestParam String openId);
 
 
-
-
-
-
 }
