@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xiaoli.xiaolicommondomain.constants.MessageConstants;
+import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
 /**
  * 阿里云号码认证服务 - 短信验证码发送服务
@@ -99,10 +100,10 @@ public class AliPnsService {
             // 获取响应体
             SendSmsVerifyCodeResponseBody body = response.getBody();
 
+
             // 判断是否发送成功
-            if (body != null && MessageConstants.SMS_MSG_OK.equals(body.getCode())) {
-                // 验证码在 Model 中的 VerifyCode 字段
-                String verifyCode = body.getModel() != null ? body.getModel().getVerifyCode() : null;
+            if (body != null && MessageConstants.PNS_MSG_OK.equals(body.getCode())) {
+
                 return true;
             }
 
@@ -115,6 +116,9 @@ public class AliPnsService {
             return false;
         }
     }
+
+
+
 }
 
 //    /**
