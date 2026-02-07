@@ -4,10 +4,7 @@ package org.xiaoli.xiaoliportalservice.user.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.TokenVO;
 import org.xiaoli.xiaoliportalservice.user.entity.dto.WeChatLoginDTO;
@@ -38,6 +35,18 @@ public class UserController {
 
         return R.ok(userService.login(weChatLoginDTO).convertTokenVO());
     }
+
+
+    /**
+     * 发送验证码
+     * @param phone
+     * @return
+     */
+    @GetMapping("/user/send_code")
+    public R<Boolean> sendCode(String phone){
+        return R.ok(userService.sendCode(phone));
+    }
+
 
 
 

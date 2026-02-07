@@ -31,4 +31,24 @@ public interface AppUserFeignClient {
     R<AppUserVO> fingByOpenId (@RequestParam String openId);
 
 
+    /**
+     * 根据手机号来查询用户信息
+     * @param phoneNumber
+     * @return
+     */
+    @GetMapping("/phone_find")
+    R<AppUserVO>  findByPhone(@RequestParam String phoneNumber);
+
+
+
+    /**
+     * 根据手机号来注册用户信息
+     * @param phoneNumber
+     * @return
+     */
+    @GetMapping("/register/phone")
+    R<AppUserVO>  registerByPhone(@RequestParam String phoneNumber);
+
+
+
 }

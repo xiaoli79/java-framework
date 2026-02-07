@@ -5,8 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminapi.appUser.domain.vo.AppUserVO;
 import org.xiaoli.xiaoliadminapi.appUser.feign.AppUserFeignClient;
+import org.xiaoli.xiaolicommoncore.utils.VerifyUtil;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.ResultCode;
+import org.xiaoli.xiaolicommondomain.exception.ServiceException;
+import org.xiaoli.xiaolicommonmessage.service.AliPnsService;
 import org.xiaoli.xiaolicommonsecurity.domain.dto.LoginUserDTO;
 import org.xiaoli.xiaolicommonsecurity.domain.dto.TokenDTO;
 import org.xiaoli.xiaolicommonsecurity.service.TokenService;
@@ -24,6 +27,10 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private TokenService tokenService;
+
+
+    @Autowired
+    private AliPnsService aliPnsService;
 
 
     /**
@@ -49,6 +56,20 @@ public class UserServiceImpl implements IUserService {
 //      创建token
         return tokenService.createToken(loginUserDTO);
 
+    }
+
+
+    /**
+     * 发送短信的验证码
+     * @param phone 手机号
+     * @return 验证码
+     */
+    @Override
+    public Boolean sendCode(String phone) {
+        if(!VerifyUtil.checkPhone(phone)){
+            throw new ServiceException("手机号格式错误",ResultCode.INVALID_PARA.getCode());
+        }
+        return aliPnsService.sendSmsVerifyCode(phone);
     }
 
     /**

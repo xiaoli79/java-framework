@@ -8,7 +8,7 @@ import org.xiaoli.xiaoliadminapi.appUser.domain.vo.AppUserVO;
 import org.xiaoli.xiaoliadminapi.appUser.feign.AppUserFeignClient;
 import org.xiaoli.xiaoliadminservice.user.service.IAppUserService;
 import org.xiaoli.xiaolicommondomain.domain.R;
-
+import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
 
 /**
@@ -49,5 +49,35 @@ public class AppUserController implements AppUserFeignClient {
         return R.ok(appUserDTO.convertToVO());
     }
 
+
+
+    /**
+     * 根据手机号来查询用户信息
+     * @param phoneNumber
+     * @return
+     */
+    @Override
+    public R<AppUserVO> findByPhone(String phoneNumber) {
+        AppUserDTO appUserDTO = appUserService.findByPhone(phoneNumber);
+        if(appUserDTO == null){
+            return R.ok();
+        }
+        return R.ok(appUserDTO.convertToVO());
+    }
+
+
+    /**
+     * 根据手机号来注册用户信息
+     * @param phoneNumber
+     * @return
+     */
+    @Override
+    public R<AppUserVO> registerByPhone(String phoneNumber) {
+        AppUserDTO appUserDTO = appUserService.registerByPhone(phoneNumber);
+        if(appUserDTO == null){
+            throw new ServiceException("注册失败");
+        }
+        return R.ok(appUserDTO.convertToVO());
+    }
 
 }
