@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.TokenVO;
+import org.xiaoli.xiaoliportalservice.user.entity.dto.CodeLoginDTO;
 import org.xiaoli.xiaoliportalservice.user.entity.dto.WeChatLoginDTO;
 import org.xiaoli.xiaoliportalservice.user.service.IUserService;
 
@@ -42,13 +43,21 @@ public class UserController {
      * @param phone
      * @return
      */
-    @GetMapping("/user/send_code")
+    @GetMapping("/send_code")
     public R<Boolean> sendCode(String phone){
         return R.ok(userService.sendCode(phone));
     }
 
 
+    /**
+     * 验证码登录
+     * @param codeLoginDTO
+     * @return
+     */
+    @PostMapping("/login/code")
+    public R<TokenVO> login (@RequestBody @Validated CodeLoginDTO codeLoginDTO){
+        return R.ok(userService.login(codeLoginDTO).convertTokenVO());
 
-
+    }
 
 }

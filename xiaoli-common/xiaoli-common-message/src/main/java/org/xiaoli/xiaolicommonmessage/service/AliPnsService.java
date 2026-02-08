@@ -2,6 +2,9 @@ package org.xiaoli.xiaolicommonmessage.service;
 
 
 import com.aliyun.dypnsapi20170525.Client;
+import com.aliyun.dypnsapi20170525.models.CheckSmsVerifyCodeRequest;
+import com.aliyun.dypnsapi20170525.models.CheckSmsVerifyCodeResponse;
+import com.aliyun.dypnsapi20170525.models.CheckSmsVerifyCodeResponseBody;
 import com.aliyun.dypnsapi20170525.models.SendSmsVerifyCodeRequest;
 import com.aliyun.dypnsapi20170525.models.SendSmsVerifyCodeResponse;
 import com.aliyun.dypnsapi20170525.models.SendSmsVerifyCodeResponseBody;
@@ -63,8 +66,8 @@ public class AliPnsService {
      * @param phoneNumber 手机号
      * @return 发送结果，包含验证码
      */
-    public boolean sendSmsVerifyCode(String phoneNumber) {
-        return sendSmsVerifyCode(phoneNumber, templateCode);
+    public boolean sendPnsVerifyCode(String phoneNumber) {
+        return sendPnsVerifyCode(phoneNumber, templateCode);
     }
 
     /**
@@ -74,7 +77,7 @@ public class AliPnsService {
      * @param templateCode 模版代码
      * @return 发送结果，包含验证码
      */
-    public boolean sendSmsVerifyCode(String phoneNumber, String templateCode) {
+    public boolean sendPnsVerifyCode(String phoneNumber, String templateCode) {
         // 先判断是否可以发送
         if (!sendMessage) {
             log.error("短信发送通道关闭, {}", phoneNumber);
@@ -117,7 +120,51 @@ public class AliPnsService {
         }
     }
 
+    /**
+     * 校验短信验证码
+     * @param phoneNumber 手机号
+     * @param verifyCode  用户输入的验证码
+     * @return 校验结果，true表示验证通过，false表示验证失败
+     */
+    public boolean checkPnsVerifyCode(String phoneNumber, String verifyCode) {
+        try {
+            // 构建校验请求
+            CheckSmsVerifyCodeRequest request = new CheckSmsVerifyCodeRequest()
+                    .setPhoneNumber(phoneNumber)
+                    .setVerifyCode(verifyCode);
 
+            // 发送校验请求
+            CheckSmsVerifyCodeResponse response = pnsClient.checkSmsVerifyCode(request);
+            
+            log.info("短信验证码校验响应: {}", new Gson().toJson(response));
+
+            // 获取响应体
+            CheckSmsVerifyCodeResponseBody body = response.getBody();
+
+            // 判断是否校验成功
+            if (body != null) {
+                // 从 Model 对象中获取校验结果，校验通过的标识是 "PASS"
+                CheckSmsVerifyCodeResponseBody.CheckSmsVerifyCodeResponseBodyModel model = body.getModel();
+                if (model != null) {
+                    String verifyResult = model.getVerifyResult();
+                    if ("PASS".equals(verifyResult)) {
+                        log.info("验证码校验通过, 手机号: {}", phoneNumber);
+                        return true;
+                    }
+                    log.warn("验证码校验未通过, 手机号: {}, 结果: {}", phoneNumber, verifyResult);
+                }
+                return false;
+            }
+
+            String errorMsg = body != null ? body.getMessage() : "未知错误";
+            log.error("验证码校验失败, 手机号: {}, 错误信息: {}", phoneNumber, errorMsg);
+            return false;
+
+        } catch (Exception e) {
+            log.error("验证码校验异常, 手机号: {}, 异常信息: {}", phoneNumber, e.getMessage(), e);
+            return false;
+        }
+    }
 
 }
 
