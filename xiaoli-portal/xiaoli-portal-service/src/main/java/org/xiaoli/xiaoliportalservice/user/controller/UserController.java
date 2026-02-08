@@ -4,12 +4,10 @@ package org.xiaoli.xiaoliportalservice.user.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.TokenVO;
+import org.xiaoli.xiaoliportalservice.user.entity.dto.CodeLoginDTO;
 import org.xiaoli.xiaoliportalservice.user.entity.dto.WeChatLoginDTO;
 import org.xiaoli.xiaoliportalservice.user.service.IUserService;
 
@@ -40,6 +38,26 @@ public class UserController {
     }
 
 
+    /**
+     * 发送验证码
+     * @param phone
+     * @return
+     */
+    @GetMapping("/send_code")
+    public R<Boolean> sendCode(String phone){
+        return R.ok(userService.sendCode(phone));
+    }
 
+
+    /**
+     * 验证码登录
+     * @param codeLoginDTO
+     * @return
+     */
+    @PostMapping("/login/code")
+    public R<TokenVO> login (@RequestBody @Validated CodeLoginDTO codeLoginDTO){
+        return R.ok(userService.login(codeLoginDTO).convertTokenVO());
+
+    }
 
 }

@@ -24,4 +24,20 @@ public interface IAppUserService {
      * @return C端用户VO
      */
     AppUserDTO findByOpenId(String openId);
+
+
+
+    /**
+     * 根据手机号来查询用户信息
+     * @param phoneNumber
+     * @return
+     */
+    AppUserDTO findByPhone(String phoneNumber);
+
+    /**
+     * 根据手机号来注册用户信息
+     * @param phoneNumber
+     * @return
+     */
+    AppUserDTO registerByPhone(String phoneNumber);
 }

@@ -17,7 +17,10 @@ public interface IUserService {
 
 
 
-
-
-
+    /**
+     * 发送验证码
+     * @param phone
+     * @return
+     */
+    Boolean sendCode(String phone);
 }

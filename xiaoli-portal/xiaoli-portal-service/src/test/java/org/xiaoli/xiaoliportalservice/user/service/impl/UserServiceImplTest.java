@@ -18,8 +18,6 @@ class UserServiceImplTest {
     private AliPnsService aliPnsService;
 
 
-    @Autowired
-    private CaptchaService captchaService;
 
 
 
@@ -29,8 +27,4 @@ class UserServiceImplTest {
     }
 
 
-    @Test
-    public void sendPnsVerifyCode(){
-        captchaService.sendCode("17337191448");
-    }
 }
