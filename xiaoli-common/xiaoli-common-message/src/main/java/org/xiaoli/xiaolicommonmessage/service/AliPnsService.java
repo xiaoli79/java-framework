@@ -1,6 +1,5 @@
 package org.xiaoli.xiaolicommonmessage.service;
 
-
 import com.aliyun.dypnsapi20170525.Client;
 import com.aliyun.dypnsapi20170525.models.CheckSmsVerifyCodeRequest;
 import com.aliyun.dypnsapi20170525.models.CheckSmsVerifyCodeResponse;
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.xiaoli.xiaolicommondomain.constants.MessageConstants;
-import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
 /**
  * 阿里云号码认证服务 - 短信验证码发送服务
@@ -86,13 +84,18 @@ public class AliPnsService {
 
         try {
             // 构建请求参数
+            // 不设置 SchemeName，使用阿里云默认的"默认方案"
             SendSmsVerifyCodeRequest request = new SendSmsVerifyCodeRequest()
                     .setSignName(signName)
                     .setTemplateCode(templateCode)
                     .setPhoneNumber(phoneNumber)
-                    .setTemplateParam("{\"code\":\"##code##\",\"min\":\"" + validTime + "\"}")
-                    .setCodeLength(codeLength)
-                    .setValidTime(validTime);
+                    .setTemplateParam("{\"code\":\"##code##\",\"min\":\"" + validTime + "\"}");
+//                    .setCodeLength(codeLength)
+//                    .setValidTime(validTime);
+
+            log.info("===== 开始发送验证码 =====");
+            log.info("发送请求参数: phoneNumber={}, signName={}, schemeName=默认方案, templateCode={}, codeLength={}, validTime={}", 
+                    phoneNumber, signName, templateCode, codeLength, validTime);
 
             // 发送请求
             SendSmsVerifyCodeResponse response = pnsClient.sendSmsVerifyCode(request);
@@ -127,12 +130,19 @@ public class AliPnsService {
      * @return 校验结果，true表示验证通过，false表示验证失败
      */
     public boolean checkPnsVerifyCode(String phoneNumber, String verifyCode) {
+        // 打印请求参数，方便调试
+        log.info("===== 开始校验验证码 =====");
+        log.info("手机号: {}, 验证码: {}", phoneNumber, verifyCode);
+        
         try {
             // 构建校验请求
+            // 不设置 SchemeName，使用阿里云默认方案（与发送时保持一致）
             CheckSmsVerifyCodeRequest request = new CheckSmsVerifyCodeRequest()
                     .setPhoneNumber(phoneNumber)
                     .setVerifyCode(verifyCode);
 
+            log.info("请求参数: {}", new Gson().toJson(request));
+            
             // 发送校验请求
             CheckSmsVerifyCodeResponse response = pnsClient.checkSmsVerifyCode(request);
             
@@ -161,7 +171,11 @@ public class AliPnsService {
             return false;
 
         } catch (Exception e) {
-            log.error("验证码校验异常, 手机号: {}, 异常信息: {}", phoneNumber, e.getMessage(), e);
+            // 打印完整的异常堆栈信息
+            log.error("验证码校验异常, 手机号: {}, 验证码: {}", phoneNumber, verifyCode);
+            log.error("异常类型: {}", e.getClass().getName());
+            log.error("异常信息: {}", e.getMessage());
+            log.error("完整堆栈: ", e);
             return false;
         }
     }
