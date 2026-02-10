@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.TokenVO;
 import org.xiaoli.xiaoliportalservice.user.entity.dto.CodeLoginDTO;
@@ -58,6 +59,17 @@ public class UserController {
     public R<TokenVO> login (@RequestBody @Validated CodeLoginDTO codeLoginDTO){
         return R.ok(userService.login(codeLoginDTO).convertTokenVO());
 
+    }
+
+    /**
+     * 编辑C端用户
+     * @param userEditReqDTO C段用户DTO
+     * @return
+     */
+    @PostMapping("/edit")
+    public R<Void> edit(@RequestBody @Validated UserEditReqDTO userEditReqDTO){
+        userService.edit(userEditReqDTO);
+        return R.ok();
     }
 
 }
