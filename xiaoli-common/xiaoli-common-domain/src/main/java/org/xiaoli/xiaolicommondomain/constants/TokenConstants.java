@@ -22,6 +22,6 @@ public class TokenConstants {
     /**
      * 登录token 缓存的key
      */
-    public static final String LOGIN_TOKEN_KEY = "logintoken";
+    public static final String LOGIN_TOKEN_KEY = "logintoken:";
 
 }

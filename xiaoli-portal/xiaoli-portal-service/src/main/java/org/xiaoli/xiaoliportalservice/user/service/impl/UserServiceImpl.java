@@ -3,6 +3,7 @@ package org.xiaoli.xiaoliportalservice.user.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 import org.xiaoli.xiaoliadminapi.appUser.domain.vo.AppUserVO;
 import org.xiaoli.xiaoliadminapi.appUser.feign.AppUserFeignClient;
 import org.xiaoli.xiaolicommoncore.utils.VerifyUtil;
@@ -100,6 +101,21 @@ public class UserServiceImpl implements IUserService {
             throw new ServiceException("手机号格式错误",ResultCode.INVALID_PARA.getCode());
         }
         return aliPnsService.sendPnsVerifyCode(phone);
+    }
+
+
+    /**
+     * 编辑C端用户
+     * @param userEditReqDTO C段用户DTO
+     * @return
+     */
+    @Override
+    public void edit(UserEditReqDTO userEditReqDTO) {
+        R<Void> result = appUserFeignClient.edit(userEditReqDTO);
+        if(result == null || result.getCode() != ResultCode.SUCCESS.getCode()){
+            throw new ServiceException("修改用户失败",ResultCode.INVALID_PARA.getCode());
+        }
+
     }
 
     /**

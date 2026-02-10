@@ -1,12 +1,16 @@
 package org.xiaoli.xiaoliadminservice.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
+import org.xiaoli.xiaoliadminservice.user.config.RabbitConfig;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.AppUser;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
 import org.xiaoli.xiaoliadminservice.user.mapper.AppUserMapper;
@@ -16,6 +20,8 @@ import org.xiaoli.xiaolicommondomain.domain.ResultCode;
 import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
 
+
+@Slf4j
 @Service
 public class AppUserServiceImpl implements IAppUserService {
 
@@ -25,6 +31,11 @@ public class AppUserServiceImpl implements IAppUserService {
 
     @Value("${appuser.info.defaultAvatar}")
     private String defaultAvatar;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+
     /**
      * 根据微信注册用户
      * @param openId 用户微信ID
@@ -129,5 +140,36 @@ public class AppUserServiceImpl implements IAppUserService {
         BeanUtils.copyProperties(appUser,appUserDTO);
         appUserDTO.setUserId(appUser.getId());
         return appUserDTO;
+    }
+
+
+    /**
+     * 编辑C端用户
+     * @param userEditReqDTO C段用户DTO
+     * @return
+     */
+    @Override
+    public void edit(UserEditReqDTO userEditReqDTO) {
+        AppUser appUser = appUserMapper.selectById(userEditReqDTO.getUserId());
+        if(appUser == null){
+            throw new ServiceException("用户不存在",ResultCode.INVALID_PARA.getCode());
+        }
+
+        appUser.setNickName(userEditReqDTO.getNickName());
+        appUser.setAvatar(userEditReqDTO.getAvatar());
+        appUserMapper.updateById(appUser);
+
+//      发送广播消息
+        AppUserDTO appUserDTO = new AppUserDTO();
+        BeanUtils.copyProperties(appUser,appUserDTO);
+        appUserDTO.setUserId(appUser.getId());
+        try{
+            rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE_NAME,"",appUserDTO);
+//                                        交换机名称                    广播模式      消息内容：用户信息
+        }catch (Exception e){
+            log.error("编辑用户发送消息失败",e);
+        }
+
+
     }
 }

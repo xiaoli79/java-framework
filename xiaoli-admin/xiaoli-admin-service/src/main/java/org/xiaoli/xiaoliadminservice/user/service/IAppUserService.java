@@ -1,8 +1,7 @@
 package org.xiaoli.xiaoliadminservice.user.service;
 
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
-
-
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 
 
 public interface IAppUserService {
@@ -40,4 +39,12 @@ public interface IAppUserService {
      * @return
      */
     AppUserDTO registerByPhone(String phoneNumber);
+
+
+    /**
+     * 编辑C端用户
+     * @param userEditReqDTO C段用户DTO
+     * @return
+     */
+    void edit(UserEditReqDTO userEditReqDTO);
 }

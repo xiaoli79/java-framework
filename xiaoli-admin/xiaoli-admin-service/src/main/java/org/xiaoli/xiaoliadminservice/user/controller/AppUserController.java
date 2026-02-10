@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 import org.xiaoli.xiaoliadminapi.appUser.domain.vo.AppUserVO;
 import org.xiaoli.xiaoliadminapi.appUser.feign.AppUserFeignClient;
 import org.xiaoli.xiaoliadminservice.user.service.IAppUserService;
@@ -78,6 +79,17 @@ public class AppUserController implements AppUserFeignClient {
             throw new ServiceException("注册失败");
         }
         return R.ok(appUserDTO.convertToVO());
+    }
+
+    /**
+     * 编辑C端用户
+     * @param userEditReqDTO C段用户DTO
+     * @return
+     */
+    @Override
+    public R<Void> edit(UserEditReqDTO userEditReqDTO) {
+       appUserService.edit(userEditReqDTO);
+       return R.ok();
     }
 
 }

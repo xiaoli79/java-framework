@@ -1,8 +1,12 @@
 package org.xiaoli.xiaoliadminapi.appUser.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 import org.xiaoli.xiaoliadminapi.appUser.domain.vo.AppUserVO;
 import org.xiaoli.xiaolicommondomain.domain.R;
 
@@ -48,6 +52,15 @@ public interface AppUserFeignClient {
      */
     @GetMapping("/register/phone")
     R<AppUserVO>  registerByPhone(@RequestParam String phoneNumber);
+
+
+    /**
+     * 编辑C端用户
+     * @param userEditReqDTO C段用户DTO
+     * @return
+     */
+    @PostMapping("/edit")
+    R<Void> edit(@RequestBody @Validated UserEditReqDTO userEditReqDTO);
 
 
 

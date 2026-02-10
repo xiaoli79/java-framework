@@ -1,5 +1,6 @@
 package org.xiaoli.xiaoliportalservice.user.service.impl;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,20 +12,15 @@ import org.xiaoli.xiaolicommonmessage.service.AliPnsService;
 @SpringBootTest
 class UserServiceImplTest {
 
-
-
+    @A
 
     @Autowired
     private AliPnsService aliPnsService;
 
 
-
-
-
     @Test
-    public void sendMessage(){
-        aliPnsService.sendSmsVerifyCode("17337191448");
-    }
+    public void edit(){
 
+    }
 
 }
