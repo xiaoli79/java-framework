@@ -10,6 +10,7 @@ import org.xiaoli.xiaolicommondomain.domain.R;
 import org.xiaoli.xiaolicommondomain.domain.vo.TokenVO;
 import org.xiaoli.xiaoliportalservice.user.entity.dto.CodeLoginDTO;
 import org.xiaoli.xiaoliportalservice.user.entity.dto.WeChatLoginDTO;
+import org.xiaoli.xiaoliportalservice.user.entity.vo.UserVo;
 import org.xiaoli.xiaoliportalservice.user.service.IUserService;
 
 /**
@@ -69,6 +70,26 @@ public class UserController {
     @PostMapping("/edit")
     public R<Void> edit(@RequestBody @Validated UserEditReqDTO userEditReqDTO){
         userService.edit(userEditReqDTO);
+        return R.ok();
+    }
+
+
+    /**
+     * 获取C端登录用户信息
+     * @return
+     */
+    @GetMapping("/login_info/get")
+    public R<UserVo> getLoginuser(){
+        return R.ok(userService.getLoginUser().convertToVO());
+    }
+
+    /**
+     * 退出登录
+     * @return
+     */
+    @DeleteMapping("/logout")
+    R<Void> logout(){
+        userService.logout();
         return R.ok();
     }
 
