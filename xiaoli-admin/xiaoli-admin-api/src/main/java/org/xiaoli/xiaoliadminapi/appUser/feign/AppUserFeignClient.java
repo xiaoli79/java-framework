@@ -10,6 +10,8 @@ import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 import org.xiaoli.xiaoliadminapi.appUser.domain.vo.AppUserVO;
 import org.xiaoli.xiaolicommondomain.domain.R;
 
+import java.util.List;
+
 /**
  * C端用户数据操作的远程调用
  */
@@ -61,6 +63,29 @@ public interface AppUserFeignClient {
      */
     @PostMapping("/edit")
     R<Void> edit(@RequestBody @Validated UserEditReqDTO userEditReqDTO);
+
+
+    /**
+     * 根据用户ID获取用户信息
+     * @param userId
+     * @return C端用户VO
+     */
+    @GetMapping("/id_find")
+    R<AppUserVO>  findById(@RequestParam Long userId);
+
+
+    /**
+     * 根据用户ID列表获取用户列表信息
+     * @param userIds
+     * @return
+     */
+    @PostMapping("/list")
+    R<List<AppUserVO>> list(@RequestBody List<Long> userIds);
+
+
+
+
+
 
 
 

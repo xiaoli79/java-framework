@@ -18,7 +18,6 @@ public class SecurityConstants {
      */
     public static final String USER_ID = "user_id";
 
-
     /**
      * 用户来源
      */

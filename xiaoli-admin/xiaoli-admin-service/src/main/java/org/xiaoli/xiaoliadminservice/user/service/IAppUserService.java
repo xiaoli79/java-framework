@@ -1,7 +1,11 @@
 package org.xiaoli.xiaoliadminservice.user.service;
 
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserListReqDTO;
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
+import org.xiaoli.xiaolicommoncore.domain.dto.BasePageDTO;
+
+import java.util.List;
 
 
 public interface IAppUserService {
@@ -47,4 +51,17 @@ public interface IAppUserService {
      * @return
      */
     void edit(UserEditReqDTO userEditReqDTO);
+
+
+
+    /**
+     * 查询C端用户
+     * @param appUserListReqDTO 查询C端用户DTO
+     * @return C端用户分页结果
+     */
+    BasePageDTO<AppUserDTO> getUserList(AppUserListReqDTO appUserListReqDTO);
+
+    AppUserDTO findById(Long userId);
+
+    List<AppUserDTO> getUserList(List<Long> userIds);
 }

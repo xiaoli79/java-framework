@@ -8,17 +8,24 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserDTO;
+import org.xiaoli.xiaoliadminapi.appUser.domain.dto.AppUserListReqDTO;
 import org.xiaoli.xiaoliadminapi.appUser.domain.dto.UserEditReqDTO;
 import org.xiaoli.xiaoliadminservice.user.config.RabbitConfig;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.AppUser;
 import org.xiaoli.xiaoliadminservice.user.domain.entity.SysUser;
 import org.xiaoli.xiaoliadminservice.user.mapper.AppUserMapper;
 import org.xiaoli.xiaoliadminservice.user.service.IAppUserService;
+import org.xiaoli.xiaolicommoncore.domain.dto.BasePageDTO;
 import org.xiaoli.xiaolicommoncore.utils.AESUtil;
 import org.xiaoli.xiaolicommondomain.domain.ResultCode;
 import org.xiaoli.xiaolicommondomain.exception.ServiceException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -60,6 +67,7 @@ public class AppUserServiceImpl implements IAppUserService {
         appUserMapper.insert(appUser);
         AppUserDTO appUserDTO = new AppUserDTO();
         BeanUtils.copyProperties(appUser,appUserDTO);
+        appUserDTO.setUserId(appUser.getId());
         appUserDTO.setOpenId(openId);
 
         return appUserDTO;
@@ -79,7 +87,7 @@ public class AppUserServiceImpl implements IAppUserService {
             return null;
         }
 
-        AppUser appUser = appUserMapper.selectById(openId);
+        AppUser appUser = appUserMapper.selectOne(new LambdaQueryWrapper<AppUser>().eq(AppUser::getOpenId, openId));
 
         if(appUser == null){
             return null;
@@ -87,6 +95,7 @@ public class AppUserServiceImpl implements IAppUserService {
 
         AppUserDTO appUserDTO = new AppUserDTO();
         BeanUtils.copyProperties(appUser,appUserDTO);
+        appUserDTO.setUserId(appUser.getId());
 //      处理手机号~~
         appUserDTO.setPhoneNumber(AESUtil.encryptHex(appUser.getPhoneNumber()));
         return appUserDTO;
@@ -110,7 +119,7 @@ public class AppUserServiceImpl implements IAppUserService {
         }
         AppUserDTO appUserDTO = new AppUserDTO();
         BeanUtils.copyProperties(appUser,appUserDTO);
-
+        appUserDTO.setUserId(appUser.getId());
         appUserDTO.setPhoneNumber(AESUtil.decryptHex(appUser.getPhoneNumber()));
         return appUserDTO;
     }
@@ -172,4 +181,102 @@ public class AppUserServiceImpl implements IAppUserService {
 
 
     }
+
+
+    /**
+     * 查询C端用户
+     * @param appUserListReqDTO 查询C端用户DTO
+     * @return C端用户分页结果
+     */
+    @Override
+    public BasePageDTO<AppUserDTO> getUserList(AppUserListReqDTO appUserListReqDTO) {
+        
+//      先给手机号进行加密
+        appUserListReqDTO.setPhoneNumber(AESUtil.encryptHex(appUserListReqDTO.getPhoneNumber()));
+        
+        BasePageDTO<AppUserDTO> result = new BasePageDTO<>();
+        
+        
+//      计算总数
+        Long totals = appUserMapper.selectCount(appUserListReqDTO);
+        if(totals==0){
+            result.setTotals(0);
+            result.setTotalPages(0);
+            result.setList(new ArrayList<>());
+            return result;
+        }
+        // 3 分页查询
+        List<AppUser> appUserList = appUserMapper.selectPage(appUserListReqDTO);
+        result.setTotals(totals.intValue());
+        result.setTotalPages(
+                BasePageDTO.calculateTotalPages(totals, appUserListReqDTO.getPageSize())
+        );
+        // 4 超页
+        if (CollectionUtils.isEmpty(appUserList)) {
+            result.setList(new ArrayList<>());
+            return result;
+        }
+        // 5 对象列表结果转换
+        result.setList(
+                appUserList.stream()
+                        .map(appUser -> {
+                            AppUserDTO appUserDTO = new AppUserDTO();
+                            BeanUtils.copyProperties(appUser, appUserDTO);
+                            appUserDTO.setUserId(appUser.getId());
+                            appUserDTO.setPhoneNumber(AESUtil.decryptHex(appUser.getPhoneNumber()));
+                            return appUserDTO;
+                        }).collect(Collectors.toList())
+        );
+        return result;
+
+
+    }
+
+    @Override
+    public AppUserDTO findById(Long userId) {
+
+
+        if(userId == null){
+            return null;
+        }
+
+        AppUser appUser = appUserMapper.selectById(userId);
+        if(appUser == null){
+            return null;
+        }
+        AppUserDTO appUserDTO = new AppUserDTO();
+        BeanUtils.copyProperties(appUser,appUserDTO);
+        appUserDTO.setPhoneNumber(AESUtil.decryptHex(appUser.getPhoneNumber()));
+        appUserDTO.setUserId(appUser.getId());
+        return appUserDTO;
+
+    }
+
+
+    @Override
+    public List<AppUserDTO> getUserList(List<Long> userIds){
+
+
+//      判空
+        if(CollectionUtils.isEmpty(userIds)){
+            return Arrays.asList();
+        }
+
+//      查询数据库
+        List<AppUser> appUsers = appUserMapper.selectBatchIds(userIds);
+
+
+//      对象转换
+        return appUsers.stream()
+               .map(appUser ->  {
+                   AppUserDTO appUserDTO = new AppUserDTO();
+                   BeanUtils.copyProperties(appUser,appUserDTO);
+                   appUserDTO.setPhoneNumber(AESUtil.encryptHex(appUser.getPhoneNumber()));
+                   appUserDTO.setUserId(appUser.getId());
+                   return appUserDTO;
+               }).collect(Collectors.toList());
+
+    }
+
+
 }
